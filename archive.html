@@ -15,7 +15,7 @@ comments: false
 
 <ul id="search-results"></ul>
 
-{%- for post in site.posts -%}
+<!-- {%- for post in site.posts -%}
   {%- capture current_category -%}{{ post.category | escape }}{%- endcapture -%}
   {%- unless current_category == previous_category -%}
     <h2>{{ current_category }}</h2>
@@ -26,4 +26,14 @@ comments: false
       <a href="{{ post.url }}">{{ post.title | escape }}</a>
     </h3> 
   </article>
+{%- endfor -%} -->
+{%- for category in site.categories -%}
+  <h2>{{ category[0] }}</h2>
+  {%- for post in category[1] -%}
+    <article class="post-item">
+      <h3 class="post-item-title">
+        <a href="{{ post.url }}">{{ post.title | escape }}</a>
+      </h3> 
+    </article>
+  {%- endfor -%}
 {%- endfor -%}
