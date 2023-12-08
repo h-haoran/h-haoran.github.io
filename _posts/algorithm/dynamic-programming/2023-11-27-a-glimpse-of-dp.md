@@ -77,7 +77,10 @@ In summary, There are several types of subproblem:
 
 # 2. Initialization
 # 3. Implementaion
-Top-down vs Bottom-up 
+Top-down vs Bottom-up   
+![bot-up](/assets/img/botup.JPG)  
+
+![bot-up](/assets/img/topdown.JPG)
 # 4. Optimization
 
 # Give it a try
