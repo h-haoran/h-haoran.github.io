@@ -5,7 +5,6 @@ date:   2023-11-27 19:07:00 +0000
 categories: Algorithm
 usemathjax: true
 ---
-
 # Overview 
 Dynamic programming (dp) is a powerful tool for solving problem. It was intimidating to start with and difficult to grasp for me, so I made this note to share some insight to dp. The essense of dp is meomorization - storing intermediate reults which can be used to construct the solution.  
 
