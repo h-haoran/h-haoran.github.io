@@ -64,14 +64,7 @@ Output: 2
 Explanation: The stepping numbers in the range [90,101] are 98 and 101. There are a total of 2 stepping numbers in the range. Hence, the output is 2
 </details>
 Solution:
-- subproblem: Does the subtring $$ s[i] $$ ($$s[0]$$ = "" ) mathch $$p[j]$$ (noted as $$ f(i,j) $$) 
-- reccurrence: 
-    - base:
-    $$ f(0,0) = 1$$ 
-    - induction:
-    $$ f(i,j) = \left \{ \begin{array}{ll}f(i,j) \lor f(i-1,j-1)  & \text{if } matches(s[i], p[j]) (s[i] == p[j] \text{ or } p[j] == '.') \\f(i,j) \lor f(i-1,j) & \text{if } p[j] == '*' \text{ and } matches(s[i], p[j-1]) \\f(i,j) \lor f(i,j-2) & \text{if } p[j] == '*' \end{array}\right.$$
-    note: case 2 recursively defines * mathches one or more preceeding char and case 3 defines * matches 0 preceeding char.
-- stroed states: $$ dp(i,j) = f(i,j) $$
+- subproblem: Let $$f(i,k)$$ be the number of strings of length i has a digit sum less than k. 
 
 [Count of Integers](https://leetcode.com/problems/count-of-integers/description/)
 You are given two numeric strings num1 and num2 and two integers max_sum and min_sum. We denote an integer x to be good if:  
