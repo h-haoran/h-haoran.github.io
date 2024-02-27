@@ -2,6 +2,7 @@
 layout: post
 title:  A Glimpse of Dynamic Programming
 date:   2023-11-27 19:07:00 +0000
+tags: dp
 categories: Algorithm
 usemathjax: true
 ---
@@ -17,14 +18,18 @@ There are four major steps for dp:
 # 1. How to find the subproblem
 The biggest question comes to what information do we want to store as intermediate results? Before answering that question, there are two equivalent of asking such question. How can we didivde this problem into subproblems? Is there any recurrence relation lies within the nature of this problem? IMO, one can never think about one question without considering the other two. For simiplicity, we refer to the above questions as finding the subproblem.
 
-All there questions are related to the subproblem. Firsly, the recurrence relation describe the purpose of finding subproblem. We are looking for reccurrance relation that can construct the final solution. Finding such a reccurrence naturaly gives the subproblem. Secondly what information can be stored, in another word what are all possble states of an intermediate steps, helps us to build the subproblem from scratch.
+All there questions are related to the subproblem. Firsly, the recurrence relation describe the purpose of finding subproblem. We are looking for reccurrance relation that can construct the final solution. Finding such a reccurrence naturaly gives the subproblem. Secondly, the information can be stored, in another word, all possble states of an intermediate steps, helps us to build the subproblem from scratch (is the solution of the subproblem).
 
 Let's look at some examples:  
 Fibonacci sequence is defined as: $$ F(n) = F(n−1) + F(n−2), F(0) = 0, F(1) = 1 $$  
 Here the reccurrence relation is explicit, so $$ F(n) $$ is the subproblem.  
 
-[Maximum Subarray](https://leetcode.cn/problems/maximum-subarray/) 
-Given an integer array `nums`, find the subarray with the largest sum, and return its sum.
+[Maximum Subarray](https://leetcode.com/problems/maximum-subarray/) 
+Given an integer array `nums`, find the subarray with the largest sum, and return its sum.  
+Solution:
+- subproblem: find the largest sum ending of first k elements (noted as $$f(k)$$) 
+- reccurrence: $$ f(k) = max(f(k-1)+nums(k),nums(k)) $$
+- stroed states: $$ dp(k) = f(k), k \in [1, n] $$
 
 
 [Regular Expression Matching](https://leetcode.com/problems/regular-expression-matching/description/)
@@ -34,10 +39,19 @@ Given an input string s and a pattern p, implement regular expression matching w
 The matching should cover the entire input string (not partial).
 <details> 
 <summary> Example </summary>
-Input: s = "ab", p = ".*"
-Output: true
-Explanation: ".*" means "zero or more (*) of any character (.)".
-</details>
+Input: s = "ab", p = ".*" <br>
+Output: true <br>
+Explanation: ".*" means "zero or more (*) of any character (.)". <br>
+</details>  
+Solution:
+- subproblem: Does the subtring $$ s[i] $$ ($$s[0]$$ = "" ) mathch $$p[j]$$ (noted as $$ f(i,j) $$) 
+- reccurrence: 
+    - base:
+    $$ f(0,0) = 1$$ 
+    - induction:
+    $$ f(i,j) = \left \{ \begin{array}{ll}f(i,j) \lor f(i-1,j-1)  & \text{if } matches(s[i], p[j]) (s[i] == p[j] \text{ or } p[j] == '.') \\f(i,j) \lor f(i-1,j) & \text{if } p[j] == '*' \text{ and } matches(s[i], p[j-1]) \\f(i,j) \lor f(i,j-2) & \text{if } p[j] == '*' \end{array}\right.$$
+    note: case 2 recursively defines * mathches one or more preceeding char and case 3 defines * matches 0 preceeding char.
+- stroed states: $$ dp(i,j) = f(i,j) $$ 
 
 
 [Count Stepping Numbers in Range](https://leetcode.com/problems/count-stepping-numbers-in-range/description/) Given two positive integers low and high represented as strings, find the count of stepping numbers in the inclusive range [low, high].  
@@ -49,6 +63,15 @@ Input: low = "90", high = "101"
 Output: 2  
 Explanation: The stepping numbers in the range [90,101] are 98 and 101. There are a total of 2 stepping numbers in the range. Hence, the output is 2
 </details>
+Solution:
+- subproblem: Does the subtring $$ s[i] $$ ($$s[0]$$ = "" ) mathch $$p[j]$$ (noted as $$ f(i,j) $$) 
+- reccurrence: 
+    - base:
+    $$ f(0,0) = 1$$ 
+    - induction:
+    $$ f(i,j) = \left \{ \begin{array}{ll}f(i,j) \lor f(i-1,j-1)  & \text{if } matches(s[i], p[j]) (s[i] == p[j] \text{ or } p[j] == '.') \\f(i,j) \lor f(i-1,j) & \text{if } p[j] == '*' \text{ and } matches(s[i], p[j-1]) \\f(i,j) \lor f(i,j-2) & \text{if } p[j] == '*' \end{array}\right.$$
+    note: case 2 recursively defines * mathches one or more preceeding char and case 3 defines * matches 0 preceeding char.
+- stroed states: $$ dp(i,j) = f(i,j) $$
 
 [Count of Integers](https://leetcode.com/problems/count-of-integers/description/)
 You are given two numeric strings num1 and num2 and two integers max_sum and min_sum. We denote an integer x to be good if:  
@@ -62,6 +85,11 @@ Input: num1 = "1", num2 = "12", min_sum = 1, max_sum = 8
 Output: 11
 Explanation: There are 11 integers whose sum of digits lies between 1 and 8 are 1,2,3,4,5,6,7,8,10,11, and 12. Thus, we return 11.
 </details>
+Let's solve a simplified version first. Count the number of strings between num1 and num2 that has a digit sum less than or equal to sum.  
+Solution:
+- subproblem: Let $$f(i,k)$$ be the number of strings of length i has a digit sum less than k. 
+- reccurrence: $$f(i, k) = \sum_{d = lo}^{hi} f(i+1,sum-d)$$ (Need to check if it is tight)
+
 
 In summary, There are several types of subproblem:    
 1. 1D dp: the only dimentional is the index which represents the size of the problem.
@@ -79,7 +107,7 @@ In summary, There are several types of subproblem:
 Top-down vs Bottom-up   
 ![bot-up](/assets/img/botup.JPG)  
 
-![bot-up](/assets/img/topdown.JPG)
+![top-down](/assets/img/topdown.JPG)
 # 4. Optimization
 
 # Give it a try
