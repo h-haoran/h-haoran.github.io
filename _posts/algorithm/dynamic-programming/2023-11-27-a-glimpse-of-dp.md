@@ -55,34 +55,43 @@ Solution:
 
 
 [Count Stepping Numbers in Range](https://leetcode.com/problems/count-stepping-numbers-in-range/description/) Given two positive integers low and high represented as strings, find the count of stepping numbers in the inclusive range [low, high].  
-A stepping number is an integer such that all of its adjacent digits have an absolute difference of exactly 1.  
+A `stepping number` is an integer such that all of its adjacent digits have an absolute difference of exactly 1.  
 Return an integer denoting the count of stepping numbers in the inclusive range [low, high].  
 <details> 
 <summary> Example </summary>
-Input: low = "90", high = "101"  
-Output: 2  
-Explanation: The stepping numbers in the range [90,101] are 98 and 101. There are a total of 2 stepping numbers in the range. Hence, the output is 2
+Input: low = "90", high = "101"  <br>
+Output: 2  <br>
+Explanation: The stepping numbers in the range [90,101] are 98 and 101. There are a total of 2 stepping numbers in the range. Hence, the output is 2.
 </details>
+Let's solve a simplified version first. Count the number of stepping Numbers that are no greater than num. 
 Solution:
-- subproblem: Let $$f(i,k)$$ be the number of strings of length i has a digit sum less than k. 
+- subproblem: Let $$f(i,j,k)$$ be the number of strings of length i has ends with digit j, where k \in {0,1,2} representing the previous string is the lowest(all 0s), the highest(==s[0:i)) or in between. ($$f(i,j,k) = 0 \text{ when } j < 0 \lor j > 9$$)
+- recurrence: 
+    - base: $$ f(i,0,0) = 1 $$, $$ f(0,num[0],1) = 1 $$, everthing else 0.
+    - induction: for $$1 \le i < n(len(num))> $$, $$0 \le j \le 9$$: 
+    $$ f(i,j,1) = f(i,j-1,1) + f(i,j+1,1) \text{ if } j==num[i]$$
+    $$ f(i,j,2) = \left \{ \begin{array}{ll}f(i-1,d-1,2) + f(i-1,d-1,1) + f(i-1,d+1,2) + f(i-1,d+1,1) & \text{if } j < num[i] \\f(i-1,d-1,2) + f(i-1,d+1,2) & \text{if } d > num[i] \end{array}\right.$$
+- stroed states: $$ dp(i,j,k) = f(i,j,k) $$ 
+- answer: $$ \sum_{d=0}^{9} f(n-1,d,1) + f(n-1,d,2)$$
 
 [Count of Integers](https://leetcode.com/problems/count-of-integers/description/)
-You are given two numeric strings num1 and num2 and two integers max_sum and min_sum. We denote an integer x to be good if:  
+You are given two numeric strings num1 and num2 and two integers max_sum and min_sum. We denote an integer x to be `good` if:  
 - num1 <= x <= num2  
 - min_sum <= digit_sum(x) <= max_sum    
 Return the number of good integers.
 Note that digit_sum(x) denotes the sum of the digits of x.
 <details> 
 <summary> Example </summary>
-Input: num1 = "1", num2 = "12", min_sum = 1, max_sum = 8
-Output: 11
-Explanation: There are 11 integers whose sum of digits lies between 1 and 8 are 1,2,3,4,5,6,7,8,10,11, and 12. Thus, we return 11.
+Input: num1 = "1", num2 = "12", min_sum = 1, max_sum = 8 <br>
+Output: 11 <br>
+Explanation: There are 11 integers whose sum of digits lies between 1 and 8 are 1,2,3,4,5,6,7,8,10,11, and 12. Thus, we return 11. <br>
 </details>
 Let's solve a simplified version first. Count the number of strings between num1 and num2 that has a digit sum less than or equal to sum.  
 Solution:
 - subproblem: Let $$f(i,k)$$ be the number of strings of length i has a digit sum less than k. 
 - reccurrence: $$f(i, k) = \sum_{d = lo}^{hi} f(i+1,sum-d)$$ (Need to check if it is tight)
-
+  we need a flag to represent either the previous string is the highest, lowest or in between (i.e. num1 = 50, num2 = 60, if we choose 6 as the first digit, it is the highest). hi = highest? num1[i]: 0; and lo = lowest? num2[i]: 9;
+- stroed states: $$ dp(i,k,m) = (f(i,k),m) where m \in \{0(lowest), 1(in between), 2(highest)\} $$ 
 
 In summary, There are several types of subproblem:    
 1. 1D dp: the only dimentional is the index which represents the size of the problem.
@@ -96,6 +105,7 @@ In summary, There are several types of subproblem:
 
 
 # 2. Initialization
+Initialization is constructing the base case in the reccurrence. 
 # 3. Implementaion
 Top-down vs Bottom-up   
 ![bot-up](/assets/img/botup.JPG)  
