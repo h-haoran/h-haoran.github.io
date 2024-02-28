@@ -70,7 +70,7 @@ Solution:
     - base: $$ f(i,0,0) = 1 $$, $$ f(0,num[0],1) = 1 $$, everthing else 0.
     - induction: for $$1 \le i < n(len(num))> $$, $$0 \le j \le 9$$: 
     $$ f(i,j,1) = f(i,j-1,1) + f(i,j+1,1) \text{ if } j==num[i]$$
-    $$ f(i,j,2) = \left \{ \begin{array}{ll}f(i-1,d-1,2) + f(i-1,d-1,1) + f(i-1,d+1,2) + f(i-1,d+1,1) & \text{if } j < num[i] \\f(i-1,d-1,2) + f(i-1,d+1,2) & \text{if } d > num[i] \end{array}\right.$$
+    $$ f(i,j,2) = \left \{ \begin{array}{ll}f(i-1,d-1,2) + f(i-1,d-1,1) + f(i-1,d+1,2) + f(i-1,d+1,1) & \text{if } j < num[i] \\f(i-1,d-1,2) + f(i-1,d+1,2) & \text{if } j > num[i] \end{array}\right.$$
 - stroed states: $$ dp(i,j,k) = f(i,j,k) $$ 
 - answer: $$ \sum_{d=0}^{9} f(n-1,d,1) + f(n-1,d,2)$$
 
