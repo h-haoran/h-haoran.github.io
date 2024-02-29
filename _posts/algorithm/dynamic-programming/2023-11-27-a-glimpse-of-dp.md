@@ -110,9 +110,10 @@ Initialization is constructing the base case in the reccurrence.
 Top-down vs Bottom-up   
 ![bot-up](/assets/img/botup.JPG)  
 
-![top-down](/assets/img/topdown.JPG)
+![top-down](/assets/img/topdown.JPG)  
+As illustrated in the graph above, the bot-up approach fill in the dp table from the base condition in order. While the top-down approach starts from the problem itself and recursively solves the subproblems that can be used to induce the final outcome. Therefore, the top-dup approach does not necessarily have to fill out all the dp table and hence can be more time efficient, however, it will have to store the running stack as a nature of the recursion.
 # 4. Optimization
-
+Instead of storing the whole dp table, it can be optimized by only using the last(or last two) row(s).
 # Give it a try
 [Paiting the walls](https://leetcode.com/problems/painting-the-walls/description/)
 You are given two 0-indexed integer arrays, `cost` and `time`, of size n representing the costs and the time taken to paint n different walls respectively. There are two painters available:
@@ -151,11 +152,13 @@ Brute force solution:
     };
 ```
 
+Solution:
+- subproblem: f(i,j) = The min cost after "painting" first i walls with j walls painted
+- recurrence: f(i,j) = min(f(i-1, j-1), f(i-1,j-1-time[i]) + cost[i])
+- answer: f(n,n);
 
-Observation: repetition
 
-Improvement: Store info
-
+Bot-up solution
 ```c++
 class Solution {
 public:
@@ -177,6 +180,31 @@ public:
             } 
         }
         return dp[n-1][n];
+    }
+};
+```
+
+Top-down solution
+```c++
+class Solution {
+public:
+    int helper(vector<int>& cost, vector<int>& time, vector<vector<int>>& dp, int idx, int w) {
+        if (dp[idx][w] == -1) {
+            int k = max(0, w-1-time[idx-1]);
+            dp[idx][w] = min(helper(cost,time,dp,idx-1,w), helper(cost,time,dp,idx-1,k)+cost[idx-1]);
+        }
+        return dp[idx][w];
+    }
+    int paintWalls(vector<int>& cost, vector<int>& time) {
+        int n = cost.size();
+        vector<vector<int>> dp(n+1, vector<int>(n+1,-1));
+        for(int i = 0; i <= n; i++) {
+            dp[i][0] = 0;
+        }
+        for (int i = 1; i <=n;  i++) {
+            dp[0][i] = INT_MAX/2;
+        }
+        return helper(cost,time,dp,n,n);
     }
 };
 ```
