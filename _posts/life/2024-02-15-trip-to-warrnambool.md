@@ -6,7 +6,7 @@ usemathjax: true
 category: Life
 ---
 
-![image-sea](/assets/img/sea.JPG)
+![image-sea](/assets/img/sea.jpg)
 当你看向海的时候   
 我也遥望   
 我们的目光便在浪里拥抱  
