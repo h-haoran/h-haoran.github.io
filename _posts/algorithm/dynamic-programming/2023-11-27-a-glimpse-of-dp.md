@@ -153,9 +153,9 @@ Brute force solution:
 ```
 
 Solution:
-- subproblem: f(i,j) = The min cost after "painting" first i walls with j walls painted
-- recurrence: f(i,j) = min(f(i-1, j-1), f(i-1,j-1-time[i]) + cost[i])
-- answer: f(n,n);
+- subproblem: Let $$f(i,j)$$ = The min cost after "painting" (assigning the wall to paid or free worker) first i walls with j walls painted
+- recurrence: $$ f(i,j) = min(f(i-1, j-1), f(i-1,j-1-time[i]) + cost[i]) $$
+- answer: $$f(n,n)$$;
 
 
 Bot-up solution
