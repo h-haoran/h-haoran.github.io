@@ -108,9 +108,9 @@ In summary, There are several types of subproblem:
 Initialization is constructing the base case in the reccurrence. 
 # 3. Implementaion
 Top-down vs Bottom-up   
-![bot-up](/assets/img/botup.JPG)  
+![bot-up](/assets/img/botup.jpg)  
 
-![top-down](/assets/img/topdown.JPG)  
+![top-down](/assets/img/topdown.jpg)  
 As illustrated in the graph above, the bot-up approach fill in the dp table from the base condition in order. While the top-down approach starts from the problem itself and recursively solves the subproblems that can be used to induce the final outcome. Therefore, the top-dup approach does not necessarily have to fill out all the dp table and hence can be more time efficient, however, it will have to store the running stack as a nature of the recursion.
 # 4. Optimization
 Instead of storing the whole dp table, it can be optimized by only using the last(or last two) row(s).
