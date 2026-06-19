@@ -1,15 +1,13 @@
 ---
-layout: page
-title: "World Cup Challenge"
-permalink: /world-cup-chanllenge/
+layout: null
+permalink: /world-cup-challenge/
 ---
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <!-- 优化移动端视口，防止双击缩放 -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>世界杯时空梦之队 - 手机触屏完美版</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>世界杯时空梦之队 - 铁腕主帅版</title>
     <style>
         :root {
             --pitch-color: #1a4d2e;
@@ -20,176 +18,158 @@ permalink: /world-cup-chanllenge/
             background-color: #121212;
             color: #fff;
             margin: 0;
-            padding: 10px;
+            padding: 15px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            /* 防止手机上长按弹出菜单和选中文本 */
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            user-select: none;
         }
-        h1 { margin: 5px 0; font-size: 20px; color: #fbc02d; text-shadow: 0 2px 4px rgba(0,0,0,0.5); text-align: center; }
-        .subtitle { color: #ffab00; font-size: 11px; margin-bottom: 10px; text-align: center; font-weight: bold; padding: 0 5px; }
+        h1 { margin: 5px 0; font-size: 26px; color: #fbc02d; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .subtitle { color: #ffab00; font-size: 13px; margin-bottom: 15px; text-align: center; font-weight: bold; }
         
         .game-container {
             display: flex;
             flex-direction: column;
             width: 100%;
-            max-width: 480px; /* 限制手机端最大宽度 */
-            gap: 10px;
+            max-width: 850px;
+            gap: 15px;
         }
 
         /* 阵型切换栏 */
         .tactics-bar {
             display: flex;
             background: #1e1e1e;
-            padding: 8px;
+            padding: 10px;
             border-radius: 8px;
             justify-content: center;
             align-items: center;
-            gap: 8px;
+            gap: 15px;
             border: 1px solid #333;
-            font-size: 12px;
         }
         .tactics-btn {
             background: #424242;
-            padding: 6px 12px;
+            padding: 8px 16px;
             color: #fff;
             border: none;
             border-radius: 4px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 12px;
-            flex: 1;
-            text-align: center;
+            font-size: 13px;
         }
         .tactics-btn.active {
             background: #fbc02d;
             color: #000;
         }
 
-        /* 球场样式：手机端自适应高度 */
+        /* 球场样式 */
         .pitch {
             background-color: var(--pitch-color);
-            background-image: repeating-linear-gradient(90deg, transparent, transparent 30px, rgba(0,0,0,0.03) 30px, rgba(0,0,0,0.03) 60px);
-            border: 3px solid #fff;
+            background-image: repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(0,0,0,0.03) 40px, rgba(0,0,0,0.03) 80px);
+            border: 4px solid #fff;
             border-radius: 12px;
-            height: 420px; /* 稍微压缩高度适应手机屏幕 */
+            height: 500px;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
-            touch-action: none; /* 阻止浏览器默认划动行为 */
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
         }
         .pitch-lines { position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-bottom: 2px solid var(--line-color); height: 50%; pointer-events: none; }
-        .center-circle { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 70px; height: 70px; border: 2px solid var(--line-color); border-radius: 50%; }
-        .penalty-area-top { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 180px; height: 60px; border: 2px solid var(--line-color); border-top: none; }
-        .penalty-area-bottom { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 180px; height: 60px; border: 2px solid var(--line-color); border-bottom: none; }
+        .center-circle { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90px; height: 90px; border: 2px solid var(--line-color); border-radius: 50%; }
+        .penalty-area-top { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 240px; height: 75px; border: 2px solid var(--line-color); border-top: none; }
+        .penalty-area-bottom { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 240px; height: 75px; border: 2px solid var(--line-color); border-bottom: none; }
 
-        /* 阵型插槽（减小尺寸适应移动端） */
+        /* 阵型插槽 */
         .position-slot {
             position: absolute;
-            width: 58px;
-            height: 58px;
-            border: 1.5px dashed rgba(255,255,255,0.4);
+            width: 76px;
+            height: 76px;
+            border: 2px dashed rgba(255,255,255,0.4);
             border-radius: 50%;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             transform: translate(-50%, -50%);
-            font-size: 9px;
+            font-size: 11px;
             font-weight: bold;
-            background: rgba(0,0,0,0.4);
-            transition: top 0.4s ease-in-out, left 0.4s ease-in-out;
-            color: #d0d0d0;
+            background: rgba(0,0,0,0.35);
+            transition: top 0.4s ease-in-out, left 0.4s ease-in-out, background 0.2s;
+            color: #e0e0e0;
             text-align: center;
-            box-sizing: border-box;
         }
         .position-slot.hovered {
-            background: rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.4);
             border-color: #fff;
         }
 
         /* 下半部分控制台 */
-        .control-panel { background: #1e1e1e; padding: 10px; border-radius: 12px; border: 1px solid #333; }
-        .status-bar { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 11px; background: #2b2b2b; padding: 8px 10px; border-radius: 6px; border-left: 3px solid #fbc02d; }
-        .btn-group { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+        .control-panel { background: #1e1e1e; padding: 15px; border-radius: 12px; border: 1px solid #333; }
+        .status-bar { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; background: #2b2b2b; padding: 10px 15px; border-radius: 6px; border-left: 4px solid #fbc02d; }
+        .btn-group { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
         
-        button { background: #2e7d32; color: white; border: none; padding: 10px 8px; border-radius: 6px; cursor: pointer; font-weight: bold; flex: 1; min-width: 100px; font-size: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        button { background: #2e7d32; color: white; border: none; padding: 11px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; flex: 1; min-width: 120px; font-size: 14px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        button:hover:not(:disabled) { background: #388e3c; }
         button:disabled { background: #424242 !important; color: #757575; cursor: not-allowed; opacity: 0.6; }
         button.reroll-btn { background: #1565c0; }
         button.settle-btn { background: #c62828; }
         
-        .team-title { font-size: 13px; color: #fbc02d; margin-bottom: 10px; text-align: center; font-weight: bold; background: rgba(251, 192, 45, 0.1); padding: 5px; border-radius: 4px; }
+        .team-title { font-size: 17px; color: #fbc02d; margin-bottom: 12px; text-align: center; font-weight: bold; background: rgba(251, 192, 45, 0.1); padding: 6px; border-radius: 4px; }
         
         .player-pool {
             display: flex;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
             flex-wrap: wrap;
-            min-height: 120px;
+            min-height: 160px;
             background: #141414;
-            padding: 10px;
+            padding: 12px;
             border-radius: 8px;
             border: 1px inset #292929;
-            touch-action: none;
+            transition: background 0.2s;
         }
+        .player-pool.hovered { background: #261c1c; border-color: #d32f2f; }
 
-        /* 手机端优化的球员卡片尺寸 */
+        /* 球员卡片 */
         .player-card {
             background: linear-gradient(135deg, #fcd68a, #b6873c);
             color: #111;
-            padding: 6px 2px;
+            padding: 8px 4px;
             border-radius: 6px;
-            width: 82px;
+            width: 110px;
             text-align: center;
+            cursor: grab;
             font-weight: bold;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.4);
-            font-size: 11px;
-            box-sizing: border-box;
-            position: relative;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            user-select: none;
+            font-size: 13px;
         }
-        .player-card .pos-tag { font-size: 8px; background: rgba(0,0,0,0.15); padding: 1px 3px; border-radius: 3px; margin-top: 2px; display: inline-block; }
+        .player-card .pos-tag { font-size: 9px; background: rgba(0,0,0,0.15); padding: 1px 4px; border-radius: 3px; margin-top: 4px; display: inline-block; }
         
-        /* 场上球员卡片缩放 */
+        /* 场上球员样式 */
         .pitch .player-card {
             width: 100%; height: 100%; border-radius: 50%;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             background: linear-gradient(135deg, #ffffff, #cfd8dc);
-            box-shadow: inset 0 0 4px rgba(0,0,0,0.3), 0 3px 5px rgba(0,0,0,0.4);
-            font-size: 10px; padding: 2px; box-sizing: border-box; color: #212121; border: 2px solid #fbc02d;
+            box-shadow: inset 0 0 6px rgba(0,0,0,0.3), 0 4px 6px rgba(0,0,0,0.4);
+            font-size: 11px; padding: 2px; box-sizing: border-box; color: #212121; border: 2px solid #fbc02d;
         }
-        .pitch .player-card .pos-tag { background: #1a4d2e; color: #fff; font-size: 7px; margin-top: 1px; }
-
-        /* 触屏拖拽时的跟随悬浮样式 */
-        .dragging-active {
-            position: fixed !important;
-            z-index: 9999 !important;
-            pointer-events: none !important;
-            transform: scale(1.1) !important;
-            opacity: 0.9 !important;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5) !important;
-        }
+        .pitch .player-card .pos-tag { background: #1a4d2e; color: #fff; font-size: 8px; margin-top: 2px; }
 
         /* 弹窗 */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; z-index: 10000; backdrop-filter: blur(5px); }
-        .modal-content { background: #222; padding: 25px; border-radius: 15px; text-align: center; border: 2px solid #fbc02d; max-width: 300px; }
-        .modal-content h1 { font-size: 24px; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(5px); }
+        .modal-content { background: #222; padding: 35px; border-radius: 15px; text-align: center; border: 2px solid #fbc02d; max-width: 420px; }
     </style>
 </head>
 <body>
 
     <h1>🏆 世界杯时空梦之队挑战</h1>
-    <div class="subtitle">⚠️ 铁律：每队限选2-3人。全场仅1次换下机会。支持手机触屏拖拽、场上互换！</div>
+    <div class="subtitle">⚠️ 铁律：无法无限随机！全场仅有1次将球员退队的机会，换阵时冲突将直接拦截。</div>
     
     <div class="game-container">
         <!-- 战术阵型面板 -->
         <div class="tactics-bar">
-            <span>阵型：</span>
-            <button id="btn-433" class="tactics-btn active" onclick="switchFormation('433')">4-3-3</button>
-            <button id="btn-442" class="tactics-btn" onclick="switchFormation('442')">4-4-2</button>
-            <button id="btn-352" class="tactics-btn" onclick="switchFormation('352')">3-5-2</button>
+            <span>选择阵型：</span>
+            <button id="btn-433" class="tactics-btn active" onclick="switchFormation('433')">4-3-3 (默认)</button>
+            <button id="btn-442" class="tactics-btn" onclick="switchFormation('442')">4-4-2 (稳守)</button>
+            <button id="btn-352" class="tactics-btn" onclick="switchFormation('352')">3-5-2 (狂攻)</button>
         </div>
 
         <!-- 上半部分：球场 -->
@@ -199,36 +179,36 @@ permalink: /world-cup-chanllenge/
             <div class="penalty-area-top"></div>
             <div class="penalty-area-bottom"></div>
             
-            <!-- 11个核心卡位 -->
-            <div class="position-slot" id="slot1" data-role="GK" style="top: 92%; left: 50%;">门将(GK)</div>
-            <div class="position-slot" id="slot2" data-role="DF" style="top: 76%; left: 15%;">左后卫(DF)</div>
-            <div class="position-slot" id="slot3" data-role="DF" style="top: 78%; left: 38%;">左中卫(DF)</div>
-            <div class="position-slot" id="slot4" data-role="DF" style="top: 78%; left: 62%;">右中卫(DF)</div>
-            <div class="position-slot" id="slot5" data-role="DF" style="top: 76%; left: 85%;">右后卫(DF)</div>
-            <div class="position-slot" id="slot6" data-role="MF" style="top: 46%; left: 25%;">左中场(MF)</div>
-            <div class="position-slot" id="slot7" data-role="MF" style="top: 52%; left: 50%;">中前卫(MF)</div>
-            <div class="position-slot" id="slot8" data-role="MF" style="top: 46%; left: 75%;">右中场(MF)</div>
-            <div class="position-slot" id="slot9" data-role="FW" style="top: 18%; left: 22%;">左边锋(FW)</div>
-            <div class="position-slot" id="slot10" data-role="FW" style="top: 14%; left: 50%;">中锋(FW)</div>
-            <div class="position-slot" id="slot11" data-role="FW" style="top: 18%; left: 78%;">右边锋(FW)</div>
+            <!-- 11个阵型卡位 -->
+            <div class="position-slot" id="slot1" data-role="GK" style="top: 91%; left: 50%;">门将<br>(GK)</div>
+            <div class="position-slot" id="slot2" data-role="DF" style="top: 76%; left: 15%;">左后卫<br>(DF)</div>
+            <div class="position-slot" id="slot3" data-role="DF" style="top: 78%; left: 38%;">左中卫<br>(DF)</div>
+            <div class="position-slot" id="slot4" data-role="DF" style="top: 78%; left: 62%;">右中卫<br>(DF)</div>
+            <div class="position-slot" id="slot5" data-role="DF" style="top: 76%; left: 85%;">右后卫<br>(DF)</div>
+            <div class="position-slot" id="slot6" data-role="MF" style="top: 46%; left: 28%;">左中场<br>(MF)</div>
+            <div class="position-slot" id="slot7" data-role="MF" style="top: 52%; left: 50%;">中前卫<br>(MF)</div>
+            <div class="position-slot" id="slot8" data-role="MF" style="top: 46%; left: 72%;">右中场<br>(MF)</div>
+            <div class="position-slot" id="slot9" data-role="FW" style="top: 17%; left: 22%;">左边锋<br>(FW)</div>
+            <div class="position-slot" id="slot10" data-role="FW" style="top: 13%; left: 50%;">中锋<br>(FW)</div>
+            <div class="position-slot" id="slot11" data-role="FW" style="top: 17%; left: 78%;">右边锋<br>(FW)</div>
         </div>
 
         <!-- 下半部分：操作台与候选池 -->
         <div class="control-panel">
             <div class="status-bar">
-                <div>首发: <span id="squadCount" style="color:#fbc02d; font-weight:bold;">0</span> / 11 人</div>
-                <div>退队特权: <span id="refundCount" style="color:#ff7043; font-weight:bold;">1</span> 次</div>
-                <div>本队已选: <span id="currentTeamCount" style="color:#81c784; font-weight:bold;">0</span> / 2-3人</div>
+                <div>首发进度: <span id="squadCount" style="color:#fbc02d; font-weight:bold;">0</span> / 11 人</div>
+                <div>本退队特权: <span id="refundCount" style="color:#ff7043; font-weight:bold;">1</span> / 1 次</div>
+                <div>本队已锁球员: <span id="currentTeamCount" style="color:#81c784; font-weight:bold;">0</span> 名 (目标: 2-3名)</div>
             </div>
             
             <div class="btn-group">
                 <button id="btnRoll" onclick="rollTeam()">随机生成球队</button>
-                <button id="btnRerollYear" class="reroll-btn" onclick="rerollYear()">换年代 (1)</button>
-                <button id="btnRerollTeam" class="reroll-btn" onclick="rerollTeam()">换球队 (1)</button>
-                <button id="btnSettle" class="settle-btn" onclick="settleGame()" disabled>提交阵容</button>
+                <button id="btnRerollYear" class="reroll-btn" onclick="rerollYear()">更改年代 (剩1次)</button>
+                <button id="btnRerollTeam" class="reroll-btn" onclick="rerollTeam()">更改球队 (剩1次)</button>
+                <button id="btnSettle" class="settle-btn" onclick="settleGame()" disabled>提交阵容结算</button>
             </div>
 
-            <div class="team-title" id="teamTitle">请点击“随机生成球队”</div>
+            <div class="team-title" id="teamTitle">请点击“随机生成球队”开启主帅生涯</div>
             <div class="player-pool" id="playerPool"></div>
         </div>
     </div>
@@ -236,26 +216,27 @@ permalink: /world-cup-chanllenge/
     <!-- 结算弹窗 -->
     <div class="modal" id="resultModal">
         <div class="modal-content">
-            <h2 style="color: #fbc02d; margin-top: 0; font-size: 18px;">🏆 执教生涯终极结算 🏆</h2>
-            <p id="totalScoreText" style="font-size: 13px;">总战力评分：0</p>
-            <h1 id="rankText" style="color: #ff5252; margin: 15px 0; font-size: 26px;">第 -- 名</h1>
-            <p id="evaluationText" style="line-height: 1.4; color: #e0e0e0; font-size: 12px;">点评加载中...</p>
-            <button onclick="location.reload()" style="background:#fbc02d; color:#000; margin-top:15px; width:100%;">重新开始</button>
+            <h2 style="color: #fbc02d; margin-top: 0;">🏆 执教生涯终极结算 🏆</h2>
+            <p id="totalScoreText" style="font-size: 16px;">总战力评分：0</p>
+            <h1 id="rankText" style="color: #ff5252; margin: 20px 0; font-size: 32px;">第 -- 名</h1>
+            <p id="evaluationText" style="line-height: 1.5; color: #e0e0e0; min-height: 48px;">点评加载中...</p>
+            <button onclick="location.reload()" style="background:#fbc02d; color:#000; margin-top:20px; width:100%;">重新开始挑战</button>
         </div>
     </div>
 
 <script>
-// 基础数据库（保持扩容版）
 const database = {
     "1986": {
         "阿根廷": [
             {name:"马拉多纳", pos:["MF", "FW"], score:99}, {name:"巴尔达诺", pos:["FW"], score:88},
             {name:"布鲁查加", pos:["MF"], score:89}, {name:"鲁杰里", pos:["DF"], score:88}, 
-            {name:"巴蒂斯塔", pos:["MF"], score:85}, {name:"普皮多", pos:["GK"], score:83}
+            {name:"巴蒂斯塔", pos:["MF"], score:85}, {name:"奥拉尔蒂科埃切亚", pos:["DF"], score:84},
+            {name:"普皮多", pos:["GK"], score:83}, {name:"博鲁查加", pos:["FW"], score:82}
         ],
         "西德": [
             {name:"马特乌斯", pos:["MF", "DF"], score:95}, {name:"鲁梅尼格", pos:["FW"], score:93},
             {name:"沃勒尔", pos:["FW"], score:90}, {name:"马加特", pos:["MF"], score:87}, 
+            {name:"布林格尔", pos:["DF"], score:86}, {name:"贝尔特霍尔德", pos:["DF"], score:85},
             {name:"舒马赫", pos:["GK"], score:90}, {name:"布莱梅", pos:["DF", "MF"], score:92}
         ]
     },
@@ -263,42 +244,63 @@ const database = {
         "法国": [
             {name:"齐达内", pos:["MF"], score:97}, {name:"德尚", pos:["MF"], score:89},
             {name:"图拉姆", pos:["DF"], score:92}, {name:"布兰科", pos:["DF"], score:90}, 
-            {name:"德塞利", pos:["DF"], score:93}, {name:"巴特兹", pos:["GK"], score:88}
+            {name:"德塞利", pos:["DF"], score:93}, {name:"卡伦布", pos:["MF"], score:85},
+            {name:"巴特兹", pos:["GK"], score:88}, {name:"特雷泽盖", pos:["FW"], score:86}
         ],
         "巴西": [
             {name:"罗纳尔多", pos:["FW"], score:98}, {name:"里瓦尔多", pos:["MF", "FW"], score:95},
             {name:"卡洛斯", pos:["DF"], score:93}, {name:"邓加", pos:["MF"], score:89}, 
+            {name:"贝贝托", pos:["FW"], score:88}, {name:"阿尔代尔", pos:["DF"], score:87},
             {name:"塔法雷尔", pos:["GK"], score:86}, {name:"莱昂纳多", pos:["MF"], score:88}
         ]
     },
     "2002": {
         "巴西": [
             {name:"罗纳尔迪尼奥", pos:["FW", "MF"], score:95}, {name:"大罗(02)", pos:["FW"], score:98},
-            {name:"里瓦尔多", pos:["FW", "MF"], score:96}, {name:"卡福", pos:["DF"], score:93}, 
-            {name:"卡洛斯(02)", pos:["DF"], score:93}, {name:"马科斯", pos:["GK"], score:85}
+            {name:"里瓦尔多(02)", pos:["FW", "MF"], score:96}, {name:"卡福", pos:["DF"], score:93}, 
+            {name:"卡洛斯(02)", pos:["DF"], score:93}, {name:"卢西奥", pos:["DF"], score:89}, 
+            {name:"吉尔伯托", pos:["MF"], score:86}, {name:"马科斯", pos:["GK"], score:85}
         ],
         "德国": [
             {name:"卡恩", pos:["GK"], score:96}, {name:"克洛泽", pos:["FW"], score:91},
             {name:"巴拉克", pos:["MF"], score:94}, {name:"施耐德", pos:["MF"], score:87}, 
-            {name:"林克", pos:["DF"], score:85}, {name:"拉梅洛", pos:["DF"], score:83}
+            {name:"梅策尔德", pos:["DF"], score:86}, {name:"林克", pos:["DF"], score:85}, 
+            {name:"杰里梅斯", pos:["MF"], score:84}, {name:"拉梅洛", pos:["DF"], score:83}
         ]
     },
     "2006": {
         "意大利": [
             {name:"卡纳瓦罗", pos:["DF"], score:96}, {name:"布封", pos:["GK"], score:97},
             {name:"皮尔洛", pos:["MF"], score:95}, {name:"托蒂", pos:["FW", "MF"], score:92}, 
-            {name:"内斯塔", pos:["DF"], score:93}, {name:"赞布罗塔", pos:["DF", "MF"], score:91}
+            {name:"内斯塔", pos:["DF"], score:93}, {name:"加图索", pos:["MF"], score:90},
+            {name:"赞布罗塔", pos:["DF", "MF"], score:91}, {name:"托尼", pos:["FW"], score:88}
+        ],
+        "法国": [
+            {name:"齐达内(06)", pos:["MF"], score:96}, {name:"亨利", pos:["FW"], score:94},
+            {name:"维埃拉", pos:["MF"], score:92}, {name:"马克莱莱", pos:["MF"], score:93}, 
+            {name:"图拉姆(06)", pos:["DF"], score:90}, {name:"萨尼奥尔", pos:["DF"], score:87},
+            {name:"阿比达尔", pos:["DF"], score:86}, {name:"巴特兹(06)", pos:["GK"], score:84}
+        ]
+    },
+    "2010": {
+        "西班牙": [
+            {name:"哈维", pos:["MF"], score:96}, {name:"伊涅斯塔", pos:["MF", "FW"], score:97},
+            {name:"普约尔", pos:["DF"], score:93}, {name:"皮克", pos:["DF"], score:91},
+            {name:"卡西利亚斯", pos:["GK"], score:95}, {name:"比利亚", pos:["FW"], score:92},
+            {name:"阿隆索", pos:["MF"], score:92}, {name:"布斯克茨", pos:["MF"], score:90}
         ]
     },
     "2022": {
         "阿根廷": [
             {name:"梅西", pos:["FW", "MF"], score:99}, {name:"阿尔瓦雷斯", pos:["FW"], score:89},
-            {name:"恩佐", pos:["MF"], score:88}, {name:"奥塔门迪", pos:["DF"], score:87},
+            {name:"恩佐", pos:["MF"], score:88}, {name:"麦卡利斯特", pos:["MF"], score:87},
+            {name:"奥塔门迪", pos:["DF"], score:87}, {name:"罗梅罗", pos:["DF"], score:89},
             {name:"马丁内斯", pos:["GK"], score:93}, {name:"德保罗", pos:["MF"], score:86}
         ],
         "法国": [
             {name:"姆巴佩", pos:["FW"], score:97}, {name:"格列兹曼", pos:["MF", "FW"], score:92},
-            {name:"吉鲁", pos:["FW"], score:87}, {name:"特奥", pos:["DF"], score:88},
+            {name:"吉鲁", pos:["FW"], score:87}, {name:"登贝莱", pos:["FW"], score:86},
+            {name:"琼阿梅尼", pos:["MF"], score:88}, {name:"特奥", pos:["DF"], score:88},
             {name:"瓦拉内", pos:["DF"], score:88}, {name:"洛里", pos:["GK"], score:85}
         ]
     }
@@ -306,43 +308,43 @@ const database = {
 
 const formations = {
     "433": [
-        { id: "slot1", role: "GK", name: "门将", t: 92, l: 50 },
+        { id: "slot1", role: "GK", name: "门将", t: 91, l: 50 },
         { id: "slot2", role: "DF", name: "左后卫", t: 76, l: 15 },
         { id: "slot3", role: "DF", name: "左中卫", t: 78, l: 38 },
         { id: "slot4", role: "DF", name: "右中卫", t: 78, l: 62 },
         { id: "slot5", role: "DF", name: "右后卫", t: 76, l: 85 },
-        { id: "slot6", role: "MF", name: "左中场", t: 46, l: 25 },
+        { id: "slot6", role: "MF", name: "左中场", t: 46, l: 28 },
         { id: "slot7", role: "MF", name: "中前卫", t: 52, l: 50 },
-        { id: "slot8", role: "MF", name: "右中场", t: 46, l: 75 },
-        { id: "slot9", role: "FW", name: "左边锋", t: 18, l: 22 },
-        { id: "slot10", role: "FW", name: "中锋", t: 14, l: 50 },
-        { id: "slot11", role: "FW", name: "右边锋", t: 18, l: 78 }
+        { id: "slot8", role: "MF", name: "右中场", t: 46, l: 72 },
+        { id: "slot9", role: "FW", name: "左边锋", t: 17, l: 22 },
+        { id: "slot10", role: "FW", name: "中锋", t: 13, l: 50 },
+        { id: "slot11", role: "FW", name: "右边锋", t: 17, l: 78 }
     ],
     "442": [
-        { id: "slot1", role: "GK", name: "门将", t: 92, l: 50 },
+        { id: "slot1", role: "GK", name: "门将", t: 91, l: 50 },
         { id: "slot2", role: "DF", name: "左后卫", t: 76, l: 15 },
         { id: "slot3", role: "DF", name: "左中卫", t: 78, l: 38 },
         { id: "slot4", role: "DF", name: "右中卫", t: 78, l: 62 },
         { id: "slot5", role: "DF", name: "右后卫", t: 76, l: 85 },
         { id: "slot6", role: "MF", name: "左前卫", t: 46, l: 18 },
-        { id: "slot7", role: "MF", name: "左中卫", t: 49, l: 39 },
-        { id: "slot8", role: "MF", name: "右中卫", t: 49, l: 61 },
+        { id: "slot7", role: "MF", name: "左中卫", t: 49, l: 40 },
+        { id: "slot8", role: "MF", name: "右中卫", t: 49, l: 60 },
         { id: "slot9", role: "MF", name: "右前卫", t: 46, l: 82 },
-        { id: "slot10", role: "FW", name: "左前锋", t: 15, l: 34 },
-        { id: "slot11", role: "FW", name: "右前锋", t: 15, l: 66 }
+        { id: "slot10", role: "FW", name: "左前锋", t: 15, l: 35 },
+        { id: "slot11", role: "FW", name: "右前锋", t: 15, l: 65 }
     ],
     "352": [
-        { id: "slot1", role: "GK", name: "门将", t: 92, l: 50 },
+        { id: "slot1", role: "GK", name: "门将", t: 91, l: 50 },
         { id: "slot2", role: "DF", name: "左中卫", t: 76, l: 25 },
-        { id: "slot3", role: "DF", name: "底中卫", t: 79, l: 50 },
+        { id: "slot3", role: "DF", name: "拖后中卫", t: 79, l: 50 },
         { id: "slot4", role: "DF", name: "右中卫", t: 76, l: 75 },
-        { id: "slot5", role: "MF", name: "后腰", t: 60, l: 50 },
-        { id: "slot6", role: "MF", name: "左边前", t: 45, l: 15 },
-        { id: "slot7", role: "MF", name: "左中场", t: 43, l: 35 },
-        { id: "slot8", role: "MF", name: "右中场", t: 43, l: 65 },
-        { id: "slot9", role: "MF", name: "右边前", t: 45, l: 85 },
-        { id: "slot10", role: "FW", name: "前腰", t: 17, l: 35 },
-        { id: "slot11", role: "FW", name: "突前", t: 14, l: 65 }
+        { id: "slot5", role: "MF", name: "后腰", t: 58, l: 50 },
+        { id: "slot6", role: "MF", name: "左边前卫", t: 44, l: 15 },
+        { id: "slot7", role: "MF", name: "左中场", t: 42, l: 36 },
+        { id: "slot8", role: "MF", name: "右中场", t: 42, l: 64 },
+        { id: "slot9", role: "MF", name: "右边前卫", t: 44, l: 85 },
+        { id: "slot10", role: "FW", name: "九号半", t: 16, l: 35 },
+        { id: "slot11", role: "FW", name: "突前马刀", t: 14, l: 65 }
     ]
 };
 
@@ -350,25 +352,32 @@ let currentFormation = "433";
 let currentYear = ""; let currentCountry = "";
 let pickedCountFromCurrent = 0; let totalPicked = 0; let rolledTimes = 0;
 let rights = { year: 1, team: 1 };
-let refundLeft = 1; 
+let refundLeft = 1; // 核心硬限制：全场允许换回候选池的次数
 let finalSquad = {}; 
 
-// 全局跨触屏操作控制变量
-let activeDragData = null;
-let ghostCard = null;
+setupDragAndDrop();
 
+// 阵型切换核心校验：冲突则强行驳回
 function switchFormation(formType) {
     const config = formations[formType];
     let conflict = false;
+
+    // 第一步：预检查冲突
     config.forEach(cfg => {
-        if (finalSquad[cfg.id] && !finalSquad[cfg.id].pos.includes(cfg.role)) conflict = true;
+        if (finalSquad[cfg.id]) {
+            const player = finalSquad[cfg.id];
+            if (!player.pos.includes(cfg.role)) {
+                conflict = true;
+            }
+        }
     });
 
     if (conflict) {
-        alert("❌ 冲突拦截：因当前首发位置冲突，不可以变更阵型！");
+        alert("❌ 冲突拦截：因当前球场上的首发核心位置冲突，不可以变更阵型！");
         return;
     }
 
+    // 第二步：通过检查，正式切换
     currentFormation = formType;
     document.querySelectorAll(".tactics-btn").forEach(b => b.classList.remove("active"));
     document.getElementById("btn-" + formType).classList.add("active");
@@ -383,14 +392,16 @@ function switchFormation(formType) {
             renderPitchSlot(cfg.id, finalSquad[cfg.id]);
         } else {
             slot.innerHTML = `${cfg.name}<br>(${cfg.role})`;
+            slot.style.border = "2px dashed rgba(255,255,255,0.4)";
         }
     });
+
     renderPool();
 }
 
 function rollTeam() {
     if (rolledTimes > 0 && (pickedCountFromCurrent < 2 || pickedCountFromCurrent > 3)) {
-        alert("不符合规则！每一支球队你必须挑选 2 到 3 名球员才能重新随机！");
+        alert("不符合规则！每一支抽出的球队你必须在里面挑 2 名或 3 名球员，然后才能继续随机下一家！");
         return;
     }
     pickedCountFromCurrent = 0; rolledTimes++;
@@ -407,196 +418,143 @@ function renderPool() {
     const titleEl = document.getElementById("teamTitle");
     if (!currentYear) return;
 
-    titleEl.innerText = `【${currentYear}年】${currentCountry}队 (${database[currentYear][currentCountry].length}选)`;
+    titleEl.innerText = `【${currentYear}年世界杯】 - ${currentCountry}国家队`;
     poolEl.innerHTML = "";
 
-    database[currentYear][currentCountry].forEach((player) => {
+    const players = database[currentYear][currentCountry];
+    players.forEach((player) => {
         if (isPlayerInSquad(player.name)) return;
 
         const card = document.createElement("div");
         card.className = "player-card";
+        card.draggable = true;
         card.innerText = player.name;
         
+        card.dataset.name = player.name;
+        card.dataset.pos = JSON.stringify(player.pos);
+        card.dataset.score = player.score;
+        card.dataset.source = "pool";
+
         const tag = document.createElement("div");
         tag.className = "pos-tag";
         tag.innerText = player.pos.join('/');
         card.appendChild(tag);
 
-        // 统一绑定：同时支持电脑端鼠标拖拽和手机端手指拖拽
-        bindTouchAndMouse(card, {
-            name: player.name, pos: player.pos, score: player.score, source: "pool"
+        card.addEventListener("dragstart", (e) => {
+            e.dataTransfer.setData("text/plain", JSON.stringify({
+                name: player.name, pos: player.pos, score: player.score, source: "pool"
+            }));
         });
-
         poolEl.appendChild(card);
     });
 }
 
-// 核心重构：抹平触屏与鼠标差异的拖拽核心算法
-function bindTouchAndMouse(element, data) {
-    // 电脑端原生兼容
-    element.draggable = true;
-    element.addEventListener("dragstart", (e) => {
-        e.dataTransfer.setData("text/plain", JSON.stringify(data));
-    });
-
-    // 手机移动端触屏核心实现
-    element.addEventListener("touchstart", (e) => {
-        // 阻止多指缩放带来的干扰
-        if (e.touches.length > 1) return;
-        activeDragData = JSON.parse(JSON.stringify(data));
-
-        // 建立一个全局跟随手指的半透明虚像卡片
-        ghostCard = element.cloneNode(true);
-        ghostCard.classList.add("dragging-active");
-        ghostCard.style.width = element.offsetWidth + "px";
-        ghostCard.style.height = element.offsetHeight + "px";
-        
-        const touch = e.touches[0];
-        ghostCard.style.top = (touch.clientY - element.offsetHeight / 2) + "px";
-        ghostCard.style.left = (touch.clientX - element.offsetWidth / 2) + "px";
-        document.body.appendChild(ghostCard);
-    }, {passive: true});
-
-    element.addEventListener("touchmove", (e) => {
-        if (!ghostCard) return;
-        if (e.cancelable) e.preventDefault(); // 阻止页面整体随手指滚动
-        
-        const touch = e.touches[0];
-        ghostCard.style.top = (touch.clientY - ghostCard.offsetHeight / 2) + "px";
-        ghostCard.style.left = (touch.clientX - ghostCard.offsetWidth / 2) + "px";
-    }, {passive: false});
-
-    element.addEventListener("touchend", (e) => {
-        if (!ghostCard || !activeDragData) return;
-        
-        // 获取手指抬起时的绝对坐标
-        const touch = e.changedTouches[0];
-        document.body.removeChild(ghostCard);
-        ghostCard = null;
-
-        // 根据坐标计算命中了球场上的哪一个槽位或候选池
-        executeDropAction(touch.clientX, touch.clientY);
-    });
-}
-
-// 触屏落地位置判定与执行
-function executeDropAction(clientX, clientY) {
-    // 1. 检查是否丢回了下方候选池（执行退队）
-    const poolEl = document.getElementById("playerPool");
-    const pRect = poolEl.getBoundingClientRect();
-    if (clientX >= pRect.left && clientX <= pRect.right && clientY >= pRect.top && clientY <= pRect.bottom) {
-        if (activeDragData.source === "pitch") {
-            if (refundLeft <= 0) { alert("❌ 无法变更：本局游戏退队特权已耗尽！"); return; }
-            refundLeft--;
-            document.getElementById("refundCount").innerText = refundLeft;
-            delete finalSquad[activeDragData.fromSlot];
-            totalPicked--;
-            if (currentYear && database[currentYear][currentCountry].some(p => p.name === activeDragData.name)) {
-                pickedCountFromCurrent = Math.max(0, pickedCountFromCurrent - 1);
-            }
-            resetPitchSlotElement(activeDragData.fromSlot);
-            renderPool(); updateUI();
-        }
-        return;
-    }
-
-    // 2. 检查是否命中了球场某个 Slot 槽位
-    const slots = document.querySelectorAll(".position-slot");
-    let hitSlot = null;
-    slots.forEach(slot => {
-        const sRect = slot.getBoundingClientRect();
-        if (clientX >= sRect.left && clientX <= sRect.right && clientY >= sRect.top && clientY <= sRect.bottom) {
-            hitSlot = slot;
-        }
-    });
-
-    if (hitSlot) {
-        processSquadPlacement(hitSlot, activeDragData);
-    }
-    activeDragData = null;
-}
-
-// 统一的处理放置与对调的逻辑（不管是鼠标还是触屏统一调用此核心）
-function processSquadPlacement(slot, dragData) {
-    const targetRole = slot.dataset.role;
-
-    if (!dragData.pos.includes(targetRole)) {
-        alert(`位置不匹配！${dragData.name} 擅长 [${dragData.pos.join('/')}]，无法踢 [${targetRole}] 卡位。`);
-        return;
-    }
-
-    if (dragData.source === "pool") {
-        if (pickedCountFromCurrent >= 3) { alert("此队选人额度已满(最多3人)，请刷新去其他球队。"); return; }
-        if (finalSquad[slot.id]) { alert("此首发卡位已有球员，候选区球员只能放至空位上。"); return; }
-        finalSquad[slot.id] = dragData;
-        pickedCountFromCurrent++; totalPicked++;
-    } 
-    else if (dragData.source === "pitch") {
-        const fromSlotId = dragData.fromSlot;
-        if (fromSlotId === slot.id) return;
-
-        if (finalSquad[slot.id]) {
-            const existingPlayer = finalSquad[slot.id];
-            const originalRole = document.getElementById(fromSlotId).dataset.role;
-            if (!existingPlayer.pos.includes(originalRole)) {
-                alert(`对调失败！场上 ${existingPlayer.name} 无法出任调换后的 [${originalRole}] 位置！`);
-                return;
-            }
-            finalSquad[fromSlotId] = existingPlayer;
-            finalSquad[slot.id] = dragData;
-            renderPitchSlot(fromSlotId, existingPlayer);
-        } else {
-            finalSquad[slot.id] = dragData;
-            delete finalSquad[fromSlotId];
-            resetPitchSlotElement(fromSlotId);
-        }
-    }
-
-    renderPitchSlot(slot.id, dragData);
-    renderPool();
-    updateUI();
-}
-
-// 原生鼠标拖拽专用绑定
 function setupDragAndDrop() {
     const slots = document.querySelectorAll(".position-slot");
     const poolEl = document.getElementById("playerPool");
 
-    poolEl.addEventListener("dragover", (e) => e.preventDefault());
+    // 候选池监听：负责处理有限退队（换下场）
+    poolEl.addEventListener("dragover", (e) => { e.preventDefault(); poolEl.classList.add("hovered"); });
+    poolEl.addEventListener("dragleave", () => poolEl.classList.remove("hovered"));
     poolEl.addEventListener("drop", (e) => {
         e.preventDefault();
+        poolEl.classList.remove("hovered");
         const dragData = JSON.parse(e.dataTransfer.getData("text/plain"));
+        
         if (dragData.source === "pitch") {
-            if (refundLeft <= 0) { alert("❌ 无法变更：本局游戏退队特权已耗尽！"); return; }
-            refundLeft--; document.getElementById("refundCount").innerText = refundLeft;
-            delete finalSquad[dragData.fromSlot]; totalPicked--;
-            if (currentYear && database[currentYear][currentCountry].some(p => p.name === dragData.name)) pickedCountFromCurrent = Math.max(0, pickedCountFromCurrent - 1);
-            resetPitchSlotElement(dragData.fromSlot); renderPool(); updateUI();
+            // 铁律：只能换下 1 名球员
+            if (refundLeft <= 0) {
+                alert("❌ 无法变更：本局游戏已达到撤销上限！最多只允许一名球员换下场！");
+                return;
+            }
+
+            refundLeft--;
+            document.getElementById("refundCount").innerText = refundLeft;
+
+            const fromSlotId = dragData.fromSlot;
+            delete finalSquad[fromSlotId];
+            totalPicked--;
+            
+            // 如果撤销的是当前卡池里的球员，扣减当前的指标
+            if (currentYear && database[currentYear][currentCountry].some(p => p.name === dragData.name)) {
+                pickedCountFromCurrent = Math.max(0, pickedCountFromCurrent - 1);
+            }
+
+            resetPitchSlotElement(fromSlotId);
+            renderPool();
+            updateUI();
         }
     });
 
+    // 场上卡位监听
     slots.forEach(slot => {
-        slot.addEventListener("dragover", (e) => e.preventDefault());
+        slot.addEventListener("dragover", (e) => { e.preventDefault(); slot.classList.add("hovered"); });
+        slot.addEventListener("dragleave", () => slot.classList.remove("hovered"));
         slot.addEventListener("drop", (e) => {
             e.preventDefault();
+            slot.classList.remove("hovered");
+            
             const dragData = JSON.parse(e.dataTransfer.getData("text/plain"));
-            processSquadPlacement(slot, dragData);
+            const targetRole = slot.dataset.role;
+
+            if (!dragData.pos.includes(targetRole)) {
+                alert(`不配位！${dragData.name} 擅长 [${dragData.pos.join('/')}]，无法胜任 [${targetRole}] 卡位。`);
+                return;
+            }
+
+            if (dragData.source === "pool") {
+                if (pickedCountFromCurrent >= 3) {
+                    alert("当前球队你已经锁定了3名球员，达到上限！请点击随机按钮刷新。");
+                    return;
+                }
+                if (finalSquad[slot.id]) {
+                    alert("该位置已有首发。只允许场上球员之间互换，候选区球员只能放到空位上。");
+                    return;
+                }
+                finalSquad[slot.id] = dragData;
+                pickedCountFromCurrent++; totalPicked++;
+            } 
+            else if (dragData.source === "pitch") {
+                const fromSlotId = dragData.fromSlot;
+                if (fromSlotId === slot.id) return;
+
+                if (finalSquad[slot.id]) {
+                    const existingPlayer = finalSquad[slot.id];
+                    const originalRole = document.getElementById(fromSlotId).dataset.role;
+                    if (!existingPlayer.pos.includes(originalRole)) {
+                        alert(`互换失败！对面的 ${existingPlayer.name} 无法踢你让出来的 [${originalRole}] 位置！`);
+                        return;
+                    }
+                    finalSquad[fromSlotId] = existingPlayer;
+                    finalSquad[slot.id] = dragData;
+                    renderPitchSlot(fromSlotId, existingPlayer);
+                } else {
+                    finalSquad[slot.id] = dragData;
+                    delete finalSquad[fromSlotId];
+                    resetPitchSlotElement(fromSlotId);
+                }
+            }
+
+            renderPitchSlot(slot.id, dragData);
+            renderPool();
+            updateUI();
         });
     });
 }
 
 function renderPitchSlot(slotId, playerData) {
     const slot = document.getElementById(slotId);
-    slot.innerHTML = `<div class="player-card">
+    slot.innerHTML = `<div class="player-card" draggable="true">
         <div style="white-space:nowrap; overflow:hidden;">${playerData.name}</div>
-        <div class="pos-tag" style="background:#1a4d2e; color:#fff">${playerData.score}点</div>
+        <div class="pos-tag">${playerData.score}点</div>
     </div>`;
     slot.style.border = "none";
 
     const innerCard = slot.querySelector(".player-card");
-    // 同样为场上生成的新卡片绑定双端拖拽逻辑（允许他们平移或互换）
-    bindTouchAndMouse(innerCard, {
-        name: playerData.name, pos: playerData.pos, score: playerData.score, source: "pitch", fromSlot: slotId
+    innerCard.addEventListener("dragstart", (e) => {
+        e.dataTransfer.setData("text/plain", JSON.stringify({
+            name: playerData.name, pos: playerData.pos, score: playerData.score, source: "pitch", fromSlot: slotId
+        }));
     });
 }
 
@@ -604,7 +562,7 @@ function resetPitchSlotElement(slotId) {
     const config = formations[currentFormation].find(c => c.id === slotId);
     const slot = document.getElementById(slotId);
     slot.innerHTML = `${config.name}<br>(${config.role})`;
-    slot.style.border = "1.5px dashed rgba(255,255,255,0.4)";
+    slot.style.border = "2px dashed rgba(255,255,255,0.4)";
 }
 
 function isPlayerInSquad(name) { return Object.values(finalSquad).some(p => p.name === name); }
@@ -623,7 +581,7 @@ function updateUI() {
 
 function rerollYear() {
     if (rights.year <= 0) return; rights.year--;
-    document.getElementById("btnRerollYear").innerText = `换年代 (0)`;
+    document.getElementById("btnRerollYear").innerText = `更改年代 (剩0次)`;
     document.getElementById("btnRerollYear").disabled = true;
     const years = Object.keys(database);
     currentYear = years[Math.floor(Math.random() * years.length)];
@@ -634,7 +592,7 @@ function rerollYear() {
 
 function rerollTeam() {
     if (rights.team <= 0) return; rights.team--;
-    document.getElementById("btnRerollTeam").innerText = `换球队 (0)`;
+    document.getElementById("btnRerollTeam").innerText = `更改球队 (剩0次)`;
     document.getElementById("btnRerollTeam").disabled = true;
     const countries = Object.keys(database[currentYear]);
     currentCountry = countries[Math.floor(Math.random() * countries.length)];
@@ -646,13 +604,22 @@ function settleGame() {
     Object.values(finalSquad).forEach(p => totalScore += p.score);
     let rank = 100; let evalText = "";
 
-    if (totalScore >= 1060) { rank = 1; evalText = `【智商压制！跨时空全能教头】在极严苛的选人限制下，你用套 [${currentFormation}] 阵型完美兼容了巨星，全胜问鼎大力神杯！`; }
-    else if (totalScore >= 1025) { rank = Math.floor(Math.random() * 3) + 2; evalText = `【豪门战术大师】顶住了盲盒机制的局限，阵容极其扎实。在决赛加时赛憾负，获得本届亚军！`; }
-    else if (totalScore >= 985) { rank = Math.floor(Math.random() * 4) + 5; evalText = `止步八强！由于盲盒卡手被迫拿了一些低分边缘卡，但进入八强已足够证明你的变阵实力。`; }
-    else { rank = Math.floor(Math.random() * 20) + 9; evalText = `由于错位与高分卡缺失，阵容上限受到限制，遗憾未能跨过淘汰赛第一轮关卡。`; }
+    if (totalScore >= 1060) {
+        rank = 1;
+        evalText = `【顶级战术大博弈！】在不随便妥协退队的情况下，你完美规划了 [${currentFormation}] 体系，这套神话阵容将横扫夺冠！`;
+    } else if (totalScore >= 1025) {
+        rank = Math.floor(Math.random() * 3) + 2;
+        evalText = `【豪门精妙组队】顶住了盲盒的制约，组建出群星闪耀的无敌阵容，斩获本届世界杯亚军！`;
+    } else if (totalScore >= 985) {
+        rank = Math.floor(Math.random() * 4) + 5;
+        evalText = `杀入世界杯8强！由于盲盒限制被迫吃下一些低分轮换卡，但战术调整后依旧是一支铁血之师。`;
+    } else {
+        rank = Math.floor(Math.random() * 20) + 9;
+        evalText = `由于后期被卡位制约强行塞入了错位球员，导致整体战力受到一定削弱，遗憾止步淘汰赛阶段。`;
+    }
 
-    document.getElementById("totalScoreText").innerText = `战力总评：${totalScore} 分 (阵型: ${currentFormation})`;
-    document.getElementById("rankText").innerText = `第 ${rank} 名`;
+    document.getElementById("totalScoreText").innerText = `战术梦之队总评分：${totalScore} 分 (阵型: ${currentFormation})`;
+    document.getElementById("rankText").innerText = `世界排名：第 ${rank} 名`;
     document.getElementById("evaluationText").innerText = evalText;
     document.getElementById("resultModal").style.display = "flex";
 }
