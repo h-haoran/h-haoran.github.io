@@ -94,10 +94,14 @@ permalink: /world-cup-challenge/
             color: #e0e0e0;
             text-align: center;
             z-index: 10;
+            cursor: pointer;
         }
-        .position-slot.hovered {
-            background: rgba(255,255,255,0.4);
-            border-color: #fff;
+        
+        /* 允许放入时的高亮特效 */
+        .position-slot.selectable {
+            border-color: #81c784;
+            background: rgba(129, 199, 132, 0.2);
+            box-shadow: 0 0 10px #81c784;
         }
 
         .control-panel { background: #1e1e1e; padding: 15px; border-radius: 12px; border: 1px solid #333; }
@@ -123,8 +127,8 @@ permalink: /world-cup-challenge/
             border-radius: 8px;
             border: 1px inset #292929;
             transition: background 0.2s;
+            cursor: pointer;
         }
-        .player-pool.hovered { background: #261c1c; border-color: #d32f2f; }
 
         .player-card {
             background: linear-gradient(135deg, #fcd68a, #b6873c);
@@ -133,15 +137,24 @@ permalink: /world-cup-challenge/
             border-radius: 6px;
             width: 110px;
             text-align: center;
-            cursor: grab;
+            cursor: pointer;
             font-weight: bold;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
             user-select: none;
             font-size: 13px;
-            touch-action: none; 
         }
         .player-card .pos-tag { font-size: 9px; background: rgba(0,0,0,0.15); padding: 1px 4px; border-radius: 3px; margin-top: 4px; display: inline-block; }
         
+        /* 选中状态动画 */
+        .player-card.selected {
+            outline: 3px solid #fbc02d;
+            box-shadow: 0 0 15px #fbc02d;
+            animation: pulse 1.2s infinite alternate;
+        }
+        @keyframes pulse {
+            from { opacity: 0.8; } to { opacity: 1; }
+        }
+
         .pitch .player-card {
             width: 100%; height: 100%; border-radius: 50%;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -158,7 +171,7 @@ permalink: /world-cup-challenge/
 <body>
 
     <h1>🏆 世界杯时空梦之队挑战</h1>
-    <div class="subtitle">⚠️ 铁律：无法无限随机！全场仅有1次将球员退队的机会，换阵时冲突将直接拦截。</div>
+    <div class="subtitle">💡 移动端提示：点击候选球员，再点击球场位置上场；双击场上球员可换下退队。</div>
     
     <div class="game-container">
         <div class="tactics-bar">
@@ -217,7 +230,6 @@ permalink: /world-cup-challenge/
     </div>
 
 <script>
-// 已经全面格式化与扩展的数据库，确保【每个年代】都有【复数以上的完整球队+全员配置】
 const database = {
     "1986": {
         "阿根廷": [
@@ -354,10 +366,10 @@ let rights = { year: 1, team: 1 };
 let refundLeft = 1; 
 let finalSquad = {}; 
 
-let activeDragData = null;
-let ghostElement = null;
+// 【新点击交互变量】核心状态追踪
+let selectedPlayerData = null; 
 
-setupDragAndDrop();
+setupClickInteractions();
 
 function switchFormation(formType) {
     const config = formations[formType];
@@ -395,10 +407,10 @@ function switchFormation(formType) {
         }
     });
 
+    cancelSelection();
     renderPool();
 }
 
-// 核心重构：独立且有序地随机“年代”与“球队”
 function rollTeam() {
     if (rolledTimes > 0 && (pickedCountFromCurrent < 2 || pickedCountFromCurrent > 3)) {
         alert("不符合规则！每一支抽出的球队你必须在里面挑 2 名或 3 名球员，然后才能继续随机下一家！");
@@ -406,14 +418,13 @@ function rollTeam() {
     }
     pickedCountFromCurrent = 0; rolledTimes++;
     
-    // 1. 先抽取随机年份
     const years = Object.keys(database);
     currentYear = years[Math.floor(Math.random() * years.length)];
     
-    // 2. 根据定好的年份，独立随机抽取该年份下的国家队
     const countries = Object.keys(database[currentYear]);
     currentCountry = countries[Math.floor(Math.random() * countries.length)];
     
+    cancelSelection();
     renderPool();
     updateUI();
 }
@@ -432,77 +443,156 @@ function renderPool() {
 
         const card = document.createElement("div");
         card.className = "player-card";
-        card.draggable = true;
         card.innerText = player.name;
         
         card.dataset.name = player.name;
         card.dataset.pos = JSON.stringify(player.pos);
         card.dataset.score = player.score;
-        card.dataset.source = "pool";
 
         const tag = document.createElement("div");
         tag.className = "pos-tag";
         tag.innerText = player.pos.join('/');
         card.appendChild(tag);
 
-        card.addEventListener("dragstart", (e) => {
-            e.dataTransfer.setData("text/plain", JSON.stringify({
-                name: player.name, pos: player.pos, score: player.score, source: "pool"
-            }));
-        });
+        // 点击选择球员核心逻辑
+        card.addEventListener("click", (e) => {
+            e.stopPropagation();
+            
+            // 如果点击的是已经选中的卡，则取消选择
+            if (selectedPlayerData && selectedPlayerData.name === player.name) {
+                cancelSelection();
+                return;
+            }
 
-        bindTouchEvents(card, { name: player.name, pos: player.pos, score: player.score, source: "pool" });
+            // 激活状态切换
+            document.querySelectorAll(".player-card").forEach(c => c.classList.remove("selected"));
+            card.classList.add("selected");
+
+            selectedPlayerData = {
+                name: player.name,
+                pos: player.pos,
+                score: player.score,
+                source: "pool"
+            };
+
+            // 智能高亮符合该球员位置的球场位置格子
+            highlightCompatibleSlots(player.pos);
+        });
 
         poolEl.appendChild(card);
     });
 }
 
-function handleDropAction(dragData, targetSlotId) {
-    const slot = document.getElementById(targetSlotId);
-    const targetRole = slot.dataset.role;
-
-    if (!dragData.pos.includes(targetRole)) {
-        alert(`不配位！${dragData.name} 擅长 [${dragData.pos.join('/')}]，无法胜任 [${targetRole}] 卡位。`);
-        return false;
-    }
-
-    if (dragData.source === "pool") {
-        if (pickedCountFromCurrent >= 3) {
-            alert("当前球队你已经锁定了3名球员，达到上限！请点击随机按钮刷新。");
-            return false;
-        }
-        if (finalSquad[slot.id]) {
-            alert("该位置已有首发。只允许场上球员之间互换，候选区球员只能放到空位上。");
-            return false;
-        }
-        finalSquad[slot.id] = dragData;
-        pickedCountFromCurrent++; totalPicked++;
-    } 
-    else if (dragData.source === "pitch") {
-        const fromSlotId = dragData.fromSlot;
-        if (fromSlotId === slot.id) return false;
-
-        if (finalSquad[slot.id]) {
-            const existingPlayer = finalSquad[slot.id];
-            const originalRole = document.getElementById(fromSlotId).dataset.role;
-            if (!existingPlayer.pos.includes(originalRole)) {
-                alert(`互换失败！对面的 ${existingPlayer.name} 无法踢你让出来的 [${originalRole}] 位置！`);
-                return false;
-            }
-            finalSquad[fromSlotId] = existingPlayer;
-            finalSquad[slot.id] = dragData;
-            renderPitchSlot(fromSlotId, existingPlayer);
+// 智能高亮格子
+function highlightCompatibleSlots(positions) {
+    document.querySelectorAll(".position-slot").forEach(slot => {
+        const role = slot.dataset.role;
+        if (positions.includes(role)) {
+            slot.classList.add("selectable");
         } else {
-            finalSquad[slot.id] = dragData;
-            delete finalSquad[fromSlotId];
-            resetPitchSlotElement(fromSlotId);
+            slot.classList.remove("selectable");
         }
-    }
+    });
+}
 
-    renderPitchSlot(slot.id, dragData);
-    renderPool();
-    updateUI();
-    return true;
+// 取消选择状态
+function cancelSelection() {
+    selectedPlayerData = null;
+    document.querySelectorAll(".player-card").forEach(c => c.classList.remove("selected"));
+    document.querySelectorAll(".position-slot").forEach(s => s.classList.remove("selectable"));
+}
+
+function setupClickInteractions() {
+    const slots = document.querySelectorAll(".position-slot");
+    const poolEl = document.getElementById("playerPool");
+
+    // 点击空白处取消一切点选
+    document.body.addEventListener("click", () => {
+        cancelSelection();
+    });
+
+    // 候选池监听：点击候选池，如果当前点选的是场上球员，则触发退队下场
+    poolEl.addEventListener("click", (e) => {
+        if (selectedPlayerData && selectedPlayerData.source === "pitch") {
+            e.stopPropagation();
+            handleRefundAction(selectedPlayerData);
+            cancelSelection();
+        }
+    });
+
+    // 场上卡位点击监听
+    slots.forEach(slot => {
+        slot.addEventListener("click", (e) => {
+            e.stopPropagation();
+            
+            // 场景 A：当前手里已经通过第一步选好了一个卡（可能来自候选池，也可能来自场上）
+            if (selectedPlayerData) {
+                const targetRole = slot.dataset.role;
+                
+                // 检验是否能够踢这个位置
+                if (!selectedPlayerData.pos.includes(targetRole)) {
+                    alert(`不配位！${selectedPlayerData.name} 擅长 [${selectedPlayerData.pos.join('/')}]，无法胜任 [${targetRole}] 卡位。`);
+                    return;
+                }
+
+                // 来源 1：从候选池点上来
+                if (selectedPlayerData.source === "pool") {
+                    if (pickedCountFromCurrent >= 3) {
+                        alert("当前球队你已经锁定了3名球员，达到上限！请点击随机按钮刷新。");
+                        return;
+                    }
+                    if (finalSquad[slot.id]) {
+                        alert("该位置已有首发。只允许场上球员之间互换位置，候选区新球员只能选空位。");
+                        return;
+                    }
+                    finalSquad[slot.id] = selectedPlayerData;
+                    pickedCountFromCurrent++; totalPicked++;
+                } 
+                // 来源 2：从场上另一个格子调动过来（场上球员位置互换）
+                else if (selectedPlayerData.source === "pitch") {
+                    const fromSlotId = selectedPlayerData.fromSlot;
+                    if (fromSlotId === slot.id) {
+                        cancelSelection();
+                        return;
+                    }
+
+                    if (finalSquad[slot.id]) {
+                        const existingPlayer = finalSquad[slot.id];
+                        const originalRole = document.getElementById(fromSlotId).dataset.role;
+                        if (!existingPlayer.pos.includes(originalRole)) {
+                            alert(`对调失败！对面的 ${existingPlayer.name} 无法踢你空出来的 [${originalRole}] 位置！`);
+                            return;
+                        }
+                        finalSquad[fromSlotId] = existingPlayer;
+                        finalSquad[slot.id] = selectedPlayerData;
+                        renderPitchSlot(fromSlotId, existingPlayer);
+                    } else {
+                        finalSquad[slot.id] = selectedPlayerData;
+                        delete finalSquad[fromSlotId];
+                        resetPitchSlotElement(fromSlotId);
+                    }
+                }
+
+                renderPitchSlot(slot.id, selectedPlayerData);
+                cancelSelection();
+                renderPool();
+                updateUI();
+            } 
+            // 场景 B：当前没有任何人被选中，点击一个已经有人的位置（代表想移位或者准备换他下场）
+            else if (finalSquad[slot.id]) {
+                const playerData = finalSquad[slot.id];
+                const innerCard = slot.querySelector(".player-card");
+                innerCard.classList.add("selected");
+                
+                selectedPlayerData = {
+                    ...playerData,
+                    source: "pitch",
+                    fromSlot: slot.id
+                };
+                highlightCompatibleSlots(playerData.pos);
+            }
+        });
+    });
 }
 
 function handleRefundAction(dragData) {
@@ -527,109 +617,19 @@ function handleRefundAction(dragData) {
     updateUI();
 }
 
-function bindTouchEvents(element, data) {
-    element.addEventListener("touchstart", (e) => {
-        activeDragData = { ...data };
-        if (element.parentElement.classList.contains("position-slot")) {
-            activeDragData.fromSlot = element.parentElement.id;
-        }
-        
-        ghostElement = element.cloneNode(true);
-        ghostElement.style.position = "fixed";
-        ghostElement.style.width = element.offsetWidth + "px";
-        ghostElement.style.height = element.offsetHeight + "px";
-        ghostElement.style.opacity = "0.8";
-        ghostElement.style.pointerEvents = "none";
-        ghostElement.style.zIndex = "1000";
-        ghostElement.style.left = (e.touches[0].clientX - element.offsetWidth / 2) + "px";
-        ghostElement.style.top = (e.touches[0].clientY - element.offsetHeight / 2) + "px";
-        document.body.appendChild(ghostElement);
-    }, { passive: true });
-
-    element.addEventListener("touchmove", (e) => {
-        if (!ghostElement) return;
-        ghostElement.style.left = (e.touches[0].clientX - ghostElement.offsetWidth / 2) + "px";
-        ghostElement.style.top = (e.touches[0].clientY - ghostElement.offsetHeight / 2) + "px";
-        
-        const touch = e.touches[0];
-        const targetEl = document.elementFromPoint(touch.clientX, touch.clientY);
-        
-        document.querySelectorAll(".position-slot, .player-pool").forEach(el => el.classList.remove("hovered"));
-        if (targetEl) {
-            const slot = targetEl.closest(".position-slot");
-            const pool = targetEl.closest(".player-pool");
-            if (slot) slot.classList.add("hovered");
-            if (pool && activeDragData.source === "pitch") pool.classList.add("hovered");
-        }
-    }, { passive: true });
-
-    element.addEventListener("touchend", (e) => {
-        if (!ghostElement) return;
-        
-        const touch = e.changedTouches[0];
-        const targetEl = document.elementFromPoint(touch.clientX, touch.clientY);
-        
-        document.querySelectorAll(".position-slot, .player-pool").forEach(el => el.classList.remove("hovered"));
-        
-        if (targetEl) {
-            const slot = targetEl.closest(".position-slot");
-            const pool = targetEl.closest(".player-pool");
-            
-            if (slot) {
-                handleDropAction(activeDragData, slot.id);
-            } else if (pool && activeDragData.source === "pitch") {
-                handleRefundAction(activeDragData);
-            }
-        }
-        
-        ghostElement.remove();
-        ghostElement = null;
-        activeDragData = null;
-    });
-}
-
-function setupDragAndDrop() {
-    const slots = document.querySelectorAll(".position-slot");
-    const poolEl = document.getElementById("playerPool");
-
-    poolEl.addEventListener("dragover", (e) => { e.preventDefault(); poolEl.classList.add("hovered"); });
-    poolEl.addEventListener("dragleave", () => poolEl.classList.remove("hovered"));
-    poolEl.addEventListener("drop", (e) => {
-        e.preventDefault();
-        poolEl.classList.remove("hovered");
-        const dragData = JSON.parse(e.dataTransfer.getData("text/plain"));
-        if (dragData.source === "pitch") handleRefundAction(dragData);
-    });
-
-    slots.forEach(slot => {
-        slot.addEventListener("dragover", (e) => { e.preventDefault(); slot.classList.add("hovered"); });
-        slot.addEventListener("dragleave", () => slot.classList.remove("hovered"));
-        slot.addEventListener("drop", (e) => {
-            e.preventDefault();
-            slot.classList.remove("hovered");
-            const dragData = JSON.parse(e.dataTransfer.getData("text/plain"));
-            handleDropAction(dragData, slot.id);
-        });
-    });
-}
-
 function renderPitchSlot(slotId, playerData) {
     const slot = document.getElementById(slotId);
-    slot.innerHTML = `<div class="player-card" draggable="true">
+    slot.innerHTML = `<div class="player-card">
         <div style="white-space:nowrap; overflow:hidden;">${playerData.name}</div>
         <div class="pos-tag">${playerData.score}点</div>
     </div>`;
     slot.style.border = "none";
 
-    const innerCard = slot.querySelector(".player-card");
-    
-    innerCard.addEventListener("dragstart", (e) => {
-        e.dataTransfer.setData("text/plain", JSON.stringify({
-            name: playerData.name, pos: playerData.pos, score: playerData.score, source: "pitch", fromSlot: slotId
-        }));
+    // 移动端快捷方式：双击场上的球员直接触发下场退队
+    slot.addEventListener("dblclick", (e) => {
+        e.stopPropagation();
+        handleRefundAction({ ...playerData, fromSlot: slotId });
     });
-
-    bindTouchEvents(innerCard, { name: playerData.name, pos: playerData.pos, score: playerData.score, source: "pitch" });
 }
 
 function resetPitchSlotElement(slotId) {
@@ -661,7 +661,6 @@ function updateUI() {
     }
 }
 
-// 更改年代（严禁抽回当前年份）
 function rerollYear() {
     if (rights.year <= 0) return; 
     
@@ -678,14 +677,13 @@ function rerollYear() {
     document.getElementById("btnRerollYear").disabled = true;
     
     currentYear = newYear;
-    // 年代变更后，球队列表也随之变为新年代下的其中一个随机球队
     const countries = Object.keys(database[currentYear]);
     currentCountry = countries[Math.floor(Math.random() * countries.length)];
     
+    cancelSelection();
     renderPool();
 }
 
-// 更改球队（严禁抽回当前球队）
 function rerollTeam() {
     if (rights.team <= 0) return; 
 
@@ -702,6 +700,7 @@ function rerollTeam() {
     document.getElementById("btnRerollTeam").disabled = true;
     
     currentCountry = newCountry;
+    cancelSelection();
     renderPool();
 }
 
