@@ -136,11 +136,13 @@ permalink: /world-cup-challenge/
         
         .team-title { font-size: 17px; color: #fbc02d; margin-bottom: 12px; text-align: center; font-weight: bold; background: rgba(251, 192, 45, 0.1); padding: 6px; border-radius: 4px; }
         
-        /* 彻底重构：换用 Grid 网格对齐布局，彻底锁死行列，不给人少时留出任何变形/形变、居中偏摆的空间 */
+        /* 【彻底重组修复项】改用坚固的 flex-start 左对齐排布，配合换行，彻底斩断单排或人数变少时的任何 resize 空间 */
         .player-pool {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(110px, 110px));
-            justify-content: center;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            align-content: flex-start;
             gap: 10px;
             min-height: 160px;
             background: #141414;
@@ -151,16 +153,16 @@ permalink: /world-cup-challenge/
             cursor: pointer;
         }
 
-        /* 钢性约束：任何多排单排场景下，球员宽度有且仅有 110px，无视外部拉伸 */
+        /* 钢性拦截限制：彻底锁死球员卡片的高宽，多排、单排还是零碎单卡，绝不拉伸、绝不 resize */
         .player-card {
             background: linear-gradient(135deg, #fcd68a, #b6873c);
             color: #111;
             padding: 8px 4px;
             border-radius: 6px;
             width: 110px;
-            max-width: 110px;
-            min-width: 110px;
+            height: 52px; /* 固定高度，建立双向刚性 */
             box-sizing: border-box;
+            flex: 0 0 110px; /* 彻底禁用放大(grow=0)、缩减(shrink=0)，基准死锁 110px */
             text-align: center;
             cursor: pointer;
             font-weight: bold;
@@ -179,9 +181,10 @@ permalink: /world-cup-challenge/
             from { opacity: 0.8; } to { opacity: 1; }
         }
 
-        /* 场上圆形球员容器保持撑满格子圆圈不受干扰 */
+        /* 保证球场上的圆形独立容器自适应格子圈，不受下方池子刚性限制影响 */
         .pitch .player-card {
             width: 100%; height: 100%; border-radius: 50%;
+            flex: 1 1 auto;
             max-width: none; min-width: auto;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             background: linear-gradient(135deg, #ffffff, #cfd8dc);
