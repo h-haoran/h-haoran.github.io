@@ -270,8 +270,9 @@ const i18n = {
         occupiedAlert: "该位置已有首发。只允许场上球员之间互换位置，候选区新球员只能选空位。",
         swapAlert: "对调失败！对面的 {0} 无法踢你空出来的 [{1}] 位置！", refundAlert: "❌ 无法变更：本局游戏已达到撤销上限！最多只允许一名球员换下场！",
         modalHeader: "🏆 执教生涯终极结算 🏆", restartBtn: "重新开始挑战", scoreText: "战术梦之队总评分：{0} 分 (阵型: {1})", rankText: "世界排名：第 {0} 名",
-        secondaryPos: "次要位置", tacticBonus: "战术契合", shareBtn: "🔗 分享战术大梦之队链接", shareSuccess: "✅ 分享链接已成功复制到剪贴板！快发给球友比拼战术吧！",
+        secondaryPos: "次要位置", tacticBonus: "战术契合", shareBtn: "🔗 分享战术大梦之队链接", shareSuccess: "✅ 分享链接（含完整花名册）已成功复制到剪贴板！快发给球友比拼战术吧！",
         viewModeSubtitle: "👀 正在观摩或复盘球友分享的神话战术阵容体系",
+        sharedTitle: "球友分享的专属阵容 / Shared Squad",
         eval1: "【神话传说！无敌夺冠】在限制极强的盲盒规则下，你不仅完美避开了属性惩罚，更深度激活了 [{0}] 体系的阵型默契加成！全服唯有不到 1% 的顶尖战术大师能够达成此奇迹！",
         eval2: "【豪门精妙组队】顶住了盲盒与多重位置衰减的制约，组建出群星闪耀的豪华阵容，斩获本届世界杯亚军！",
         eval3: "杀入世界杯8强！由于盲盒限制被迫吃下一些低分卡或踢次要位置，但整体搭配合理，战术调整后依旧是一支铁血之师。",
@@ -291,107 +292,157 @@ const i18n = {
         occupiedAlert: "This slot is occupied. Swapping is only allowed between pitch players.",
         swapAlert: "Swap Failed! {0} cannot play in your vacated [{1}] position!", refundAlert: "❌ Denied: Maximum refund limit reached for this match!",
         modalHeader: "🏆 Managerial Career Final Settlement 🏆", restartBtn: "Restart Challenge", scoreText: "Dream Team Total Rating: {0} (Formation: {1})", rankText: "World Ranking: No. {0}",
-        secondaryPos: "Secondary", tacticBonus: "Tactic Fit", shareBtn: "🔗 Share Dream Team Link", shareSuccess: "✅ Share link copied to clipboard! Share it with friends to compare tactics!",
-        viewModeSubtitle: "Reviewing a mythic tactical dream squad shared by another manager.",
+        secondaryPos: "Secondary", tacticBonus: "Tactic Fit", shareBtn: "🔗 Share Dream Team Link", shareSuccess: "✅ Roster & Share link copied to clipboard! Share it with friends to compare tactics!",
+        viewModeSubtitle: "👀 Reviewing a mythic tactical dream squad shared by another manager.",
+        sharedTitle: "Shared Squad / 专属阵容",
         eval1: "【Mythic Manager! World Champion】 Against the blinding RNG constraints, you built a flawless squad, eliminated all penalties, and fully maximized the [{0}] tactical bonus! Achieved by less than 1% of tactical geniuses globally!",
         eval2: "【Elite Team Building】 Overcoming the blind box RNG and secondary position nerfs, you assembled an invincible super team and won the Runner-up!",
         eval3: "World Cup Quarter-finals! Forced to accept lower-tier options or secondary position penalties, but still a fierce iron-willed squad.",
         eval4: "Eliminated in the Knockout stage. Positional constraints forced too many sub-optimal choices and compromised your overall strength.",
-        positions: { GK: "GK", DF: "DF", MF: "MF", FW: "FW", "门将": "GK", "左后卫": "LB", "左中卫": "LCB", "右中卫": "RCB", "右后卫": "RB", "左中场": "LCM", "中前卫": "CM", "右中场": "RCM", "左边锋": "LW", "中锋": "ST", "右边锋": "RW", "左前卫": "LM", "右前卫": "RM", "左前锋": "LS", "右前锋": "RS", "拖后中卫": "CB", "后腰": "CDM", "left Midfielder": "LWM", "右边前卫": "RWM", "九号半": "CF", "突前马刀": "SS" },
+        positions: { GK: "GK", DF: "DF", MF: "MF", FW: "FW", "门将": "GK", "左后卫": "LB", "左中卫": "LCB", "右中卫": "RCB", "右后卫": "RB", "左中场": "LCM", "中前卫": "CM", "右中场": "RCM", "左边锋": "LW", "中锋": "ST", "右边锋": "RW", "左前卫": "LM", "右前卫": "RM", "左前锋": "LS", "右前锋": "RS", "拖后中卫": "CB", "后腰": "CDM", "左边前卫": "LWM", "右边前卫": "RWM", "九号半": "CF", "突前马刀": "SS" },
         countries: { "阿根廷": "Argentina", "西德": "West Germany", "法国": "France", "巴西": "Brazil", "德国": "Germany", "意大利": "Italy", "西班牙": "Spain", "荷兰": "Netherlands" }
     }
 };
 
 let currentLang = "zh";
 
-// 深度重构数据库：将 name 升级为带有中英文映射的独立属性 (nameZh / nameEn)
+// 数据库扩展：所有非门将球员全面补充 secondary positions 组合与精准的战术倾向拟合度 fit
 const database = {
     "1986": {
         "阿根廷": [
-            {nameZh:"马拉多纳", nameEn:"Maradona", pos:["MF", "FW"], score:99, fit:"352"}, {nameZh:"巴尔达诺", nameEn:"Valdano", pos:["FW"], score:88, fit:"433"},
-            {nameZh:"布鲁查加", nameEn:"Burruchaga", pos:["MF"], score:89, fit:"352"}, {nameZh:"鲁杰里", nameEn:"Ruggeri", pos:["DF"], score:88, fit:"442"}, 
-            {nameZh:"巴蒂斯塔", nameEn:"Batista", pos:["MF"], score:85, fit:"442"}, {nameZh:"奥拉尔蒂科埃切亚", nameEn:"Olarticoechea", pos:["DF"], score:84, fit:"442"},
-            {nameZh:"普皮多", nameEn:"Pumpido", pos:["GK"], score:83, fit:"433"}, {nameZh:"博鲁查加", nameEn:"Boruchaga", pos:["FW"], score:82, fit:"352"}
+            {nameZh:"马拉多纳", nameEn:"Maradona", pos:["MF", "FW"], score:99, fit:"352"}, 
+            {nameZh:"巴尔达诺", nameEn:"Valdano", pos:["FW", "MF"], score:88, fit:"433"},
+            {nameZh:"布鲁查加", nameEn:"Burruchaga", pos:["MF", "FW"], score:89, fit:"352"}, 
+            {nameZh:"鲁杰里", nameEn:"Ruggeri", pos:["DF", "MF"], score:88, fit:"442"}, 
+            {nameZh:"巴蒂斯塔", nameEn:"Batista", pos:["MF", "DF"], score:85, fit:"442"}, 
+            {nameZh:"奥拉尔蒂科埃切亚", nameEn:"Olarticoechea", pos:["DF", "MF"], score:84, fit:"442"},
+            {nameZh:"普皮多", nameEn:"Pumpido", pos:["GK"], score:83, fit:"433"}, 
+            {nameZh:"博鲁查加", nameEn:"Boruchaga", pos:["FW", "MF"], score:82, fit:"352"}
         ],
         "西德": [
-            {nameZh:"马特乌斯", nameEn:"Matthäus", pos:["MF", "DF"], score:95, fit:"442"}, {nameZh:"鲁梅尼格", nameEn:"Rummenigge", pos:["FW"], score:93, fit:"433"},
-            {nameZh:"沃勒尔", nameEn:"Völler", pos:["FW"], score:90, fit:"433"}, {nameZh:"马加特", nameEn:"Magath", pos:["MF"], score:87, fit:"442"}, 
-            {nameZh:"布林格尔", nameEn:"Briegel", pos:["DF"], score:86, fit:"442"}, {nameZh:"贝尔特霍尔德", nameEn:"Berthold", pos:["DF"], score:85, fit:"442"},
-            {nameZh:"舒马赫", nameEn:"Schumacher", pos:["GK"], score:90, fit:"442"}, {nameZh:"布莱梅", nameEn:"Brehme", pos:["DF", "MF"], score:92, fit:"442"}
+            {nameZh:"马特乌斯", nameEn:"Matthäus", pos:["MF", "DF"], score:95, fit:"442"}, 
+            {nameZh:"鲁梅尼格", nameEn:"Rummenigge", pos:["FW", "MF"], score:93, fit:"433"},
+            {nameZh:"沃勒尔", nameEn:"Völler", pos:["FW", "MF"], score:90, fit:"433"}, 
+            {nameZh:"马加特", nameEn:"Magath", pos:["MF", "FW"], score:87, fit:"442"}, 
+            {nameZh:"布林格尔", nameEn:"Briegel", pos:["DF", "MF"], score:86, fit:"442"}, 
+            {nameZh:"贝尔特霍尔德", nameEn:"Berthold", pos:["DF", "MF"], score:85, fit:"442"},
+            {nameZh:"舒马赫", nameEn:"Schumacher", pos:["GK"], score:90, fit:"442"}, 
+            {nameZh:"布莱梅", nameEn:"Brehme", pos:["DF", "MF"], score:92, fit:"442"}
         ]
     },
     "1998": {
         "法国": [
-            {nameZh:"齐达内", nameEn:"Zidane", pos:["MF"], score:97, fit:"433"}, {nameZh:"德尚", nameEn:"Deschamps", pos:["MF"], score:89, fit:"442"},
-            {nameZh:"图拉姆", nameEn:"Thuram", pos:["DF"], score:92, fit:"442"}, {nameZh:"布兰科", nameEn:"Blanc", pos:["DF"], score:90, fit:"442"}, 
-            {nameZh:"德塞利", nameEn:"Desailly", pos:["DF"], score:93, fit:"442"}, {nameZh:"卡伦布", nameEn:"Karembeu", pos:["MF"], score:85, fit:"442"},
-            {nameZh:"巴特兹", nameEn:"Barthez", pos:["GK"], score:88, fit:"433"}, {nameZh:"特雷泽盖", nameEn:"Trezeguet", pos:["FW"], score:86, fit:"352"}
+            {nameZh:"齐达内", nameEn:"Zidane", pos:["MF", "FW"], score:97, fit:"433"}, 
+            {nameZh:"德尚", nameEn:"Deschamps", pos:["MF", "DF"], score:89, fit:"442"},
+            {nameZh:"图拉姆", nameEn:"Thuram", pos:["DF", "MF"], score:92, fit:"442"}, 
+            {nameZh:"布兰科", nameEn:"Blanc", pos:["DF", "MF"], score:90, fit:"442"}, 
+            {nameZh:"德塞利", nameEn:"Desailly", pos:["DF", "MF"], score:93, fit:"442"}, 
+            {nameZh:"卡伦布", nameEn:"Karembeu", pos:["MF", "DF"], score:85, fit:"442"},
+            {nameZh:"巴特兹", nameEn:"Barthez", pos:["GK"], score:88, fit:"433"}, 
+            {nameZh:"特雷泽盖", nameEn:"Trezeguet", pos:["FW", "MF"], score:86, fit:"352"}
         ],
         "巴西": [
-            {nameZh:"罗纳尔多", nameEn:"Ronaldo", pos:["FW"], score:98, fit:"433"}, {nameZh:"里瓦尔多", nameEn:"Rivaldo", pos:["MF", "FW"], score:95, fit:"352"},
-            {nameZh:"卡洛斯", nameEn:"Roberto Carlos", pos:["DF"], score:93, fit:"352"}, {nameZh:"邓加", nameEn:"Dunga", pos:["MF"], score:89, fit:"442"}, 
-            {nameZh:"贝贝托", nameEn:"Bebeto", pos:["FW"], score:88, fit:"442"}, {nameZh:"阿尔代尔", nameEn:"Aldair", pos:["DF"], score:87, fit:"442"},
-            {nameZh:"塔法雷尔", nameEn:"Taffarel", pos:["GK"], score:86, fit:"442"}, {nameZh:"莱昂纳多", nameEn:"Leonardo", pos:["MF"], score:88, fit:"433"}
+            {nameZh:"罗纳尔多", nameEn:"Ronaldo", pos:["FW", "MF"], score:98, fit:"433"}, 
+            {nameZh:"里瓦尔多", nameEn:"Rivaldo", pos:["MF", "FW"], score:95, fit:"352"},
+            {nameZh:"卡洛斯", nameEn:"Roberto Carlos", pos:["DF", "MF"], score:93, fit:"352"}, 
+            {nameZh:"邓加", nameEn:"Dunga", pos:["MF", "DF"], score:89, fit:"442"}, 
+            {nameZh:"贝贝托", nameEn:"Bebeto", pos:["FW", "MF"], score:88, fit:"442"}, 
+            {nameZh:"阿尔代尔", nameEn:"Aldair", pos:["DF", "MF"], score:87, fit:"442"},
+            {nameZh:"塔法雷尔", nameEn:"Taffarel", pos:["GK"], score:86, fit:"442"}, 
+            {nameZh:"莱昂纳多", nameEn:"Leonardo", pos:["MF", "FW"], score:88, fit:"433"}
         ]
     },
     "2002": {
         "巴西": [
-            {nameZh:"罗纳尔迪尼奥", nameEn:"Ronaldinho", pos:["FW", "MF"], score:95, fit:"352"}, {nameZh:"大罗(02)", nameEn:"Ronaldo (02)", pos:["FW"], score:98, fit:"433"},
-            {nameZh:"里瓦尔多(02)", nameEn:"Rivaldo (02)", pos:["FW", "MF"], score:96, fit:"352"}, {nameZh:"卡福", nameEn:"Cafu", pos:["DF"], score:93, fit:"352"}, 
-            {nameZh:"卡洛斯(02)", nameEn:"R. Carlos (02)", pos:["DF"], score:93, fit:"352"}, {nameZh:"卢西奥", nameEn:"Lúcio", pos:["DF"], score:89, fit:"442"}, 
-            {nameZh:"吉尔伯托", nameEn:"Gilberto Silva", pos:["MF"], score:86, fit:"442"}, {nameZh:"马科斯", nameEn:"Marcos", pos:["GK"], score:85, fit:"433"}
+            {nameZh:"罗纳尔迪尼奥", nameEn:"Ronaldinho", pos:["FW", "MF"], score:95, fit:"352"}, 
+            {nameZh:"大罗(02)", nameEn:"Ronaldo (02)", pos:["FW", "MF"], score:98, fit:"433"},
+            {nameZh:"里瓦尔多(02)", nameEn:"Rivaldo (02)", pos:["FW", "MF"], score:96, fit:"352"}, 
+            {nameZh:"卡福", nameEn:"Cafu", pos:["DF", "MF"], score:93, fit:"352"}, 
+            {nameZh:"卡洛斯(02)", nameEn:"R. Carlos (02)", pos:["DF", "MF"], score:93, fit:"352"}, 
+            {nameZh:"卢西奥", nameEn:"Lúcio", pos:["DF", "MF"], score:89, fit:"442"}, 
+            {nameZh:"吉尔伯托", nameEn:"Gilberto Silva", pos:["MF", "DF"], score:86, fit:"442"}, 
+            {nameZh:"马科斯", nameEn:"Marcos", pos:["GK"], score:85, fit:"433"}
         ],
         "德国": [
-            {nameZh:"卡恩", nameEn:"Oliver Kahn", pos:["GK"], score:96, fit:"442"}, {nameZh:"克洛泽", nameEn:"Miroslav Klose", pos:["FW"], score:91, fit:"442"},
-            {nameZh:"巴拉克", nameEn:"Michael Ballack", pos:["MF"], score:94, fit:"442"}, {nameZh:"施耐德", nameEn:"Bernd Schneider", pos:["MF"], score:87, fit:"442"}, 
-            {nameZh:"梅策尔德", nameEn:"Metzelder", pos:["DF"], score:86, fit:"442"}, {nameZh:"林克", nameEn:"Thomas Linke", pos:["DF"], score:85, fit:"442"}, 
-            {nameZh:"杰里梅斯", nameEn:"Jens Jeremies", pos:["MF"], score:84, fit:"442"}, {nameZh:"拉梅洛", nameEn:"Carsten Ramelow", pos:["DF"], score:83, fit:"442"}
+            {nameZh:"卡恩", nameEn:"Oliver Kahn", pos:["GK"], score:96, fit:"442"}, 
+            {nameZh:"克洛泽", nameEn:"Miroslav Klose", pos:["FW", "MF"], score:91, fit:"442"},
+            {nameZh:"巴拉克", nameEn:"Michael Ballack", pos:["MF", "FW"], score:94, fit:"442"}, 
+            {nameZh:"施耐德", nameEn:"Bernd Schneider", pos:["MF", "FW"], score:87, fit:"442"}, 
+            {nameZh:"梅策尔德", nameEn:"Metzelder", pos:["DF", "MF"], score:86, fit:"442"}, 
+            {nameZh:"林克", nameEn:"Thomas Linke", pos:["DF", "MF"], score:85, fit:"442"}, 
+            {nameZh:"杰里梅斯", nameEn:"Jens Jeremies", pos:["MF", "DF"], score:84, fit:"442"}, 
+            {nameZh:"拉梅洛", nameEn:"Carsten Ramelow", pos:["DF", "MF"], score:83, fit:"442"}
         ]
     },
     "2006": {
         "意大利": [
-            {nameZh:"卡纳瓦罗", nameEn:"Cannavaro", pos:["DF"], score:96, fit:"442"}, {nameZh:"布封", nameEn:"Buffon", pos:["GK"], score:97, fit:"442"},
-            {nameZh:"皮尔洛", nameEn:"Pirlo", pos:["MF"], score:95, fit:"433"}, {nameZh:"托蒂", nameEn:"Totti", pos:["FW", "MF"], score:92, fit:"352"}, 
-            {nameZh:"内斯塔", nameEn:"Nesta", pos:["DF"], score:93, fit:"442"}, {nameZh:"加图索", nameEn:"Gattuso", pos:["MF"], score:90, fit:"442"},
-            {nameZh:"赞布罗塔", nameEn:"Zambrotta", pos:["DF", "MF"], score:91, fit:"442"}, {nameZh:"托尼", nameEn:"Toni", pos:["FW"], score:88, fit:"442"}
+            {nameZh:"卡纳瓦罗", nameEn:"Cannavaro", pos:["DF", "MF"], score:96, fit:"442"}, 
+            {nameZh:"布封", nameEn:"Buffon", pos:["GK"], score:97, fit:"442"},
+            {nameZh:"皮尔洛", nameEn:"Pirlo", pos:["MF", "FW"], score:95, fit:"433"}, 
+            {nameZh:"托蒂", nameEn:"Totti", pos:["FW", "MF"], score:92, fit:"352"}, 
+            {nameZh:"内斯塔", nameEn:"Nesta", pos:["DF", "MF"], score:93, fit:"442"}, 
+            {nameZh:"加图索", nameEn:"Gattuso", pos:["MF", "DF"], score:90, fit:"442"},
+            {nameZh:"赞布罗塔", nameEn:"Zambrotta", pos:["DF", "MF"], score:91, fit:"442"}, 
+            {nameZh:"托尼", nameEn:"Toni", pos:["FW", "MF"], score:88, fit:"442"}
         ],
         "法国": [
-            {nameZh:"齐达内(06)", nameEn:"Zidane (06)", pos:["MF"], score:96, fit:"433"}, {nameZh:"亨利", nameEn:"Henry", pos:["FW"], score:94, fit:"433"},
-            {nameZh:"维埃拉", nameEn:"Vieira", pos:["MF"], score:92, fit:"442"}, {nameZh:"马克莱莱", nameEn:"Makelele", pos:["MF"], score:93, fit:"442"}, 
-            {nameZh:"图拉姆(06)", nameEn:"Thuram (06)", pos:["DF"], score:90, fit:"442"}, {nameZh:"萨尼奥尔", nameEn:"Sagnol", pos:["DF"], score:87, fit:"442"},
-            {nameZh:"阿比达尔", nameEn:"Abidal", pos:["DF"], score:86, fit:"442"}, {nameZh:"巴特兹(06)", nameEn:"Barthez (06)", pos:["GK"], score:84, fit:"433"}
+            {nameZh:"齐达内(06)", nameEn:"Zidane (06)", pos:["MF", "FW"], score:96, fit:"433"}, 
+            {nameZh:"亨利", nameEn:"Henry", pos:["FW", "MF"], score:94, fit:"433"},
+            {nameZh:"维埃拉", nameEn:"Vieira", pos:["MF", "DF"], score:92, fit:"442"}, 
+            {nameZh:"马克莱莱", nameEn:"Makelele", pos:["MF", "DF"], score:93, fit:"442"}, 
+            {nameZh:"图拉姆(06)", nameEn:"Thuram (06)", pos:["DF", "MF"], score:90, fit:"442"}, 
+            {nameZh:"萨尼奥尔", nameEn:"Sagnol", pos:["DF", "MF"], score:87, fit:"442"},
+            {nameZh:"阿比达尔", nameEn:"Abidal", pos:["DF", "MF"], score:86, fit:"442"}, 
+            {nameZh:"巴特兹(06)", nameEn:"Barthez (06)", pos:["GK"], score:84, fit:"433"}
         ]
     },
     "2010": {
         "西班牙": [
-            {nameZh:"哈维", nameEn:"Xavi", pos:["MF"], score:96, fit:"433"}, {nameZh:"伊涅斯塔", nameEn:"Iniesta", pos:["MF", "FW"], score:97, fit:"433"},
-            {nameZh:"普约尔", nameEn:"Puyol", pos:["DF"], score:93, fit:"442"}, {nameZh:"皮克", nameEn:"Piqué", pos:["DF"], score:91, fit:"442"},
-            {nameZh:"卡西利亚斯", nameEn:"Casillas", pos:["GK"], score:95, fit:"433"}, {nameZh:"比利亚", nameEn:"Villa", pos:["FW"], score:92, fit:"433"},
-            {nameZh:"阿隆索", nameEn:"Xabi Alonso", pos:["MF"], score:92, fit:"433"}, {nameZh:"布斯克茨", nameEn:"Busquets", pos:["MF"], score:90, fit:"433"}
+            {nameZh:"哈维", nameEn:"Xavi", pos:["MF", "FW"], score:96, fit:"433"}, 
+            {nameZh:"伊涅斯塔", nameEn:"Iniesta", pos:["MF", "FW"], score:97, fit:"433"},
+            {nameZh:"普约尔", nameEn:"Puyol", pos:["DF", "MF"], score:93, fit:"442"}, 
+            {nameZh:"皮克", nameEn:"Piqué", pos:["DF", "MF"], score:91, fit:"442"},
+            {nameZh:"卡西利亚斯", nameEn:"Casillas", pos:["GK"], score:95, fit:"433"}, 
+            {nameZh:"比利亚", nameEn:"Villa", pos:["FW", "MF"], score:92, fit:"433"},
+            {nameZh:"阿隆索", nameEn:"Xabi Alonso", pos:["MF", "DF"], score:92, fit:"433"}, 
+            {nameZh:"布斯克茨", nameEn:"Busquets", pos:["MF", "DF"], score:90, fit:"433"}
         ],
         "荷兰": [
-            {nameZh:"斯内德", nameEn:"Sneijder", pos:["MF"], score:95, fit:"433"}, {nameZh:"罗本", nameEn:"Robben", pos:["FW"], score:94, fit:"433"},
-            {nameZh:"范佩西", nameEn:"Van Persie", pos:["FW"], score:90, fit:"433"}, {nameZh:"库伊特", nameEn:"Kuyt", pos:["FW", "MF"], score:88, fit:"442"},
-            {nameZh:"范博梅尔", nameEn:"Van Bommel", pos:["MF"], score:88, fit:"442"}, {nameZh:"德容", nameEn:"N. de Jong", pos:["MF"], score:87, fit:"442"},
-            {nameZh:"海廷加", nameEn:"Heitinga", pos:["DF"], score:85, fit:"442"}, {nameZh:"斯特克伦博格", nameEn:"Stekelenburg", pos:["GK"], score:86, fit:"433"}
+            {nameZh:"斯内德", nameEn:"Sneijder", pos:["MF", "FW"], score:95, fit:"433"}, 
+            {nameZh:"罗本", nameEn:"Robben", pos:["FW", "MF"], score:94, fit:"433"},
+            {nameZh:"范佩西", nameEn:"Van Persie", pos:["FW", "MF"], score:90, fit:"433"}, 
+            {nameZh:"库伊特", nameEn:"Kuyt", pos:["FW", "MF"], score:88, fit:"442"},
+            {nameZh:"范博梅尔", nameEn:"Van Bommel", pos:["MF", "DF"], score:88, fit:"442"}, 
+            {nameZh:"德容", nameEn:"N. de Jong", pos:["MF", "DF"], score:87, fit:"442"},
+            {nameZh:"海廷加", nameEn:"Heitinga", pos:["DF", "MF"], score:85, fit:"442"}, 
+            {nameZh:"斯特克伦博格", nameEn:"Stekelenburg", pos:["GK"], score:86, fit:"433"}
         ]
     },
     "2022": {
         "阿根廷": [
-            {nameZh:"梅西", nameEn:"Messi", pos:["FW", "MF"], score:99, fit:"352"}, {nameZh:"阿尔瓦雷斯", nameEn:"Álvarez", pos:["FW"], score:89, fit:"433"},
-            {nameZh:"恩佐", nameEn:"Enzo", pos:["MF"], score:88, fit:"433"}, {nameZh:"麦卡利斯特", nameEn:"Mac Allister", pos:["MF"], score:87, fit:"433"},
-            {nameZh:"奥塔门迪", nameEn:"Otamendi", pos:["DF"], score:87, fit:"442"}, {nameZh:"罗梅罗", nameEn:"C. Romero", pos:["DF"], score:89, fit:"442"},
-            {nameZh:"马丁内斯", nameEn:"E. Martínez", pos:["GK"], score:93, fit:"433"}, {nameZh:"德保罗", nameEn:"De Paul", pos:["MF"], score:86, fit:"433"}
+            {nameZh:"梅西", nameEn:"Messi", pos:["FW", "MF"], score:99, fit:"352"}, 
+            {nameZh:"阿尔瓦雷斯", nameEn:"Álvarez", pos:["FW", "MF"], score:89, fit:"433"},
+            {nameZh:"恩佐", nameEn:"Enzo", pos:["MF", "DF"], score:88, fit:"433"}, 
+            {nameZh:"麦卡利斯特", nameEn:"Mac Allister", pos:["MF", "FW"], score:87, fit:"433"},
+            {nameZh:"奥塔门迪", nameEn:"Otamendi", pos:["DF", "MF"], score:87, fit:"442"}, 
+            {nameZh:"罗梅罗", nameEn:"C. Romero", pos:["DF", "MF"], score:89, fit:"442"},
+            {nameZh:"马丁内斯", nameEn:"E. Martínez", pos:["GK"], score:93, fit:"433"}, 
+            {nameZh:"德保罗", nameEn:"De Paul", pos:["MF", "FW"], score:86, fit:"433"}
         ],
         "法国": [
-            {nameZh:"姆巴佩", nameEn:"Mbappé", pos:["FW"], score:97, fit:"433"}, {nameZh:"格列兹曼", nameEn:"Griezmann", pos:["MF", "FW"], score:92, fit:"433"},
-            {nameZh:"吉鲁", nameEn:"Giroud", pos:["FW"], score:87, fit:"442"}, {nameZh:"登贝莱", nameEn:"Dembélé", pos:["FW"], score:86, fit:"433"},
-            {nameZh:"琼阿梅尼", nameEn:"Tchouaméni", pos:["MF"], score:88, fit:"433"}, {nameZh:"特奥", nameEn:"Theo Hern.", pos:["DF"], score:88, fit:"352"},
-            {nameZh:"瓦拉内", nameEn:"Varane", pos:["DF"], score:88, fit:"442"}, {nameZh:"洛里", nameEn:"Lloris", pos:["GK"], score:85, fit:"442"}
+            {nameZh:"姆巴佩", nameEn:"Mbappé", pos:["FW", "MF"], score:97, fit:"433"}, 
+            {nameZh:"格列兹曼", nameEn:"Griezmann", pos:["MF", "FW"], score:92, fit:"433"},
+            {nameZh:"吉鲁", nameEn:"Giroud", pos:["FW", "MF"], score:87, fit:"442"}, 
+            {nameZh:"登贝莱", nameEn:"Dembélé", pos:["FW", "MF"], score:86, fit:"433"},
+            {nameZh:"琼阿梅尼", nameEn:"Tchouaméni", pos:["MF", "DF"], score:88, fit:"433"}, 
+            {nameZh:"特奥", nameEn:"Theo Hern.", pos:["DF", "MF"], score:88, fit:"352"},
+            {nameZh:"瓦拉内", nameEn:"Varane", pos:["DF", "MF"], score:88, fit:"442"}, 
+            {nameZh:"洛里", nameEn:"Lloris", pos:["GK"], score:85, fit:"442"}
         ]
     }
 };
 
+// 严谨修复 352 及其他阵型内的【虚线卡位标识键】，彻底阻断硬编码残留
 const formations = {
     "433": [
         { id: "slot1", role: "GK", name: "门将", t: 91, l: 50 },
@@ -413,8 +464,8 @@ const formations = {
         { id: "slot4", role: "DF", name: "右中卫", t: 78, l: 62 },
         { id: "slot5", role: "DF", name: "右后卫", t: 76, l: 85 },
         { id: "slot6", role: "MF", name: "左前卫", t: 46, l: 18 },
-        { id: "slot7", role: "MF", name: "左中卫", t: 49, l: 40 },
-        { id: "slot8", role: "MF", name: "右中卫", t: 49, l: 60 },
+        { id: "slot7", role: "MF", name: "左中场", t: 49, l: 40 }, // 修复归类同步
+        { id: "slot8", role: "MF", name: "右中场", t: 49, l: 60 },
         { id: "slot9", role: "MF", name: "右前卫", t: 46, l: 82 },
         { id: "slot10", role: "FW", name: "左前锋", t: 15, l: 35 },
         { id: "slot11", role: "FW", name: "右前锋", t: 15, l: 65 }
@@ -425,7 +476,7 @@ const formations = {
         { id: "slot3", role: "DF", name: "拖后中卫", t: 79, l: 50 },
         { id: "slot4", role: "DF", name: "右中卫", t: 76, l: 75 },
         { id: "slot5", role: "MF", name: "后腰", t: 58, l: 50 },
-        { id: "slot6", role: "MF", name: "左边前卫", t: 44, l: 15 },
+        { id: "slot6", role: "MF", name: "左边前卫", t: 44, l: 15 }, // 已完全映射修复
         { id: "slot7", role: "MF", name: "左中场", t: 42, l: 36 },
         { id: "slot8", role: "MF", name: "右中场", t: 42, l: 64 },
         { id: "slot9", role: "MF", name: "右边前卫", t: 44, l: 85 },
@@ -471,14 +522,13 @@ function switchLanguage(lang) {
     document.getElementById("ui-refund").innerHTML = `${i18n[lang].refund} <span id="refundCount" style="color:#ff7043; font-weight:bold;">${refundLeft}</span> / 1`;
     document.getElementById("ui-team-count").innerHTML = `${i18n[lang].teamCount} <span id="currentTeamCount" style="color:#81c784; font-weight:bold;">${pickedCountFromCurrent}</span> ${i18n[lang].targetText}`;
 
-    // 刷新场上卡位与对应中英文名
+    // 智能动态刷新球场所有的基础虚线标记格子和战术简称
     const config = formations[currentFormation];
     config.forEach(cfg => {
         const slot = document.getElementById(cfg.id);
         if (finalSquad[cfg.id]) {
             renderPitchSlot(cfg.id, finalSquad[cfg.id]);
         } else {
-            // 中文显示中文卡位名称(例如:左中卫)，英文显示英文简称缩写(例如:LCB)
             const posName = i18n[lang].positions[cfg.name] || cfg.name;
             slot.innerHTML = lang === "zh" ? `${posName}<br>(${cfg.role})` : `${posName}`;
         }
@@ -489,12 +539,11 @@ function switchLanguage(lang) {
         document.getElementById("teamTitle").innerText = i18n[lang].teamTitle.format(currentYear, transCountry);
         renderPool();
     } else {
-        document.getElementById("teamTitle").innerText = isViewMode ? "SHARED SQUAD" : i18n[lang].initTitle;
+        document.getElementById("teamTitle").innerText = isViewMode ? i18n[lang].sharedTitle : i18n[lang].initTitle;
     }
     updateUI();
 }
 
-// URL分享内容恢复解码
 function checkUrlParams() {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has('f') && urlParams.has('p')) {
@@ -543,7 +592,7 @@ function shareTactics() {
     navigator.clipboard.writeText(shareUrl).then(() => {
         alert(i18n[currentLang].shareSuccess);
     }).catch(err => {
-        prompt("Copy Link:", shareUrl);
+        prompt("Copy Link / 复制链接:", shareUrl);
     });
 }
 
@@ -619,7 +668,6 @@ function renderPool() {
 
         const card = document.createElement("div");
         card.className = "player-card";
-        // 核心支持：根据语言环境渲染对应球员名字
         card.innerText = currentLang === "zh" ? player.nameZh : player.nameEn;
         
         card.dataset.nameZh = player.nameZh;
@@ -772,7 +820,6 @@ function renderPitchSlot(slotId, playerData) {
     const isTacticsFit = playerData.fit === currentFormation;
     const bonusTagHTML = isTacticsFit ? `<div class="bonus-tag">🔥 ${i18n[currentLang].tacticBonus}</div>` : '';
 
-    // 双语实时名称决定
     const displayName = currentLang === "zh" ? playerData.nameZh : playerData.nameEn;
 
     slot.innerHTML = `<div class="player-card">
@@ -796,6 +843,7 @@ function resetPitchSlotElement(slotId) {
     slot.style.border = "2px dashed rgba(255,255,255,0.4)";
 }
 
+// 查重保障
 function isPlayerInSquad(nameZh) { return Object.values(finalSquad).some(p => p.nameZh === nameZh); }
 
 function updateUI() {
