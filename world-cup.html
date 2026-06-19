@@ -136,11 +136,12 @@ permalink: /world-cup-challenge/
         
         .team-title { font-size: 17px; color: #fbc02d; margin-bottom: 12px; text-align: center; font-weight: bold; background: rgba(251, 192, 45, 0.1); padding: 6px; border-radius: 4px; }
         
+        /* 彻底重构：换用 Grid 网格对齐布局，彻底锁死行列，不给人少时留出任何变形/形变、居中偏摆的空间 */
         .player-pool {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(110px, 110px));
             justify-content: center;
             gap: 10px;
-            flex-wrap: wrap;
             min-height: 160px;
             background: #141414;
             padding: 12px;
@@ -150,12 +151,16 @@ permalink: /world-cup-challenge/
             cursor: pointer;
         }
 
+        /* 钢性约束：任何多排单排场景下，球员宽度有且仅有 110px，无视外部拉伸 */
         .player-card {
             background: linear-gradient(135deg, #fcd68a, #b6873c);
             color: #111;
             padding: 8px 4px;
             border-radius: 6px;
             width: 110px;
+            max-width: 110px;
+            min-width: 110px;
+            box-sizing: border-box;
             text-align: center;
             cursor: pointer;
             font-weight: bold;
@@ -174,8 +179,10 @@ permalink: /world-cup-challenge/
             from { opacity: 0.8; } to { opacity: 1; }
         }
 
+        /* 场上圆形球员容器保持撑满格子圆圈不受干扰 */
         .pitch .player-card {
             width: 100%; height: 100%; border-radius: 50%;
+            max-width: none; min-width: auto;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             background: linear-gradient(135deg, #ffffff, #cfd8dc);
             box-shadow: inset 0 0 6px rgba(0,0,0,0.3), 0 4px 6px rgba(0,0,0,0.4);
@@ -187,7 +194,6 @@ permalink: /world-cup-challenge/
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(5px); padding: 10px; }
         
-        /* 深度改动：打造高 scannable 大名单列表容器 */
         .modal-content { 
             background: #222; 
             padding: 25px; 
@@ -307,7 +313,6 @@ permalink: /world-cup-challenge/
             <h1 id="rankText" style="color: #ff5252; margin: 10px 0; font-size: 28px;">第 -- 名</h1>
             <p id="evaluationText" style="line-height: 1.4; color: #e0e0e0; font-size: 13px; min-height: 40px; margin-bottom: 15px; text-align: justify;"></p>
             
-            <!-- 大名单渲染桩容器 -->
             <div class="roster-list" id="rosterContainer"></div>
 
             <button id="ui-share-btn" onclick="shareTactics()" style="background:#1565c0; color:#fff; width:100%; margin-top:10px; font-weight:bold; padding:11px 15px; border-radius:6px; border:none; cursor:pointer;">🔗 分享战术大梦之队链接</button>
@@ -316,6 +321,9 @@ permalink: /world-cup-challenge/
     </div>
 
 <script>
+let finalCalculatedScore = 0;
+let finalCalculatedRank = 100;
+
 const i18n = {
     zh: {
         title: "🏆 世界杯时空梦之队挑战",
@@ -329,10 +337,11 @@ const i18n = {
         occupiedAlert: "该位置已有首发。只允许场上球员之间互换位置，候选区新球员只能选空位。",
         swapAlert: "对调失败！对面的 {0} 无法踢你空出来的 [{1}] 位置！", refundAlert: "❌ 无法变更：本局游戏已达到撤销上限！最多只允许一名球员换下场！",
         modalHeader: "🏆 执教生涯终极结算 🏆", restartBtn: "重新开始挑战", scoreText: "战术梦之队总评分：{0} 分 (阵型: {1})", rankText: "世界排名：第 {0} 名",
-        secondaryPos: "次要位置", tacticBonus: "战术契合", shareBtn: "🔗 分享战术大梦之队链接", shareSuccess: "✅ 分享链接（含大名单）已成功复制到剪贴板！快发给球友比拼战术吧！",
+        secondaryPos: "次要位置", tacticBonus: "战术契合", shareBtn: "🔗 分享战术大梦之队链接", shareSuccess: "✅ 专属大名单与摘要已成功复制到剪贴板！发给球友比拼战术吧！",
         viewModeSubtitle: "👀 正在观摩或复盘球友分享的神话战术阵容体系",
         sharedTitle: "球友分享的专属阵容 / Shared Squad",
         badgeFit: "契合", badgeSec: "次要",
+        shareTemplate: "【🏆 世界杯时空梦之队挑战】\n🔥 阵型体系：{0}\n💯 战术总战力：{1} 点\n🏅 世界主帅排名：第 {2} 名\n\n⚽ 简略首发大名单：\n{3}\n\n👇 复制链接在浏览器打开，直接复盘/观摩此神话阵容：\n{4}",
         eval1: "【神话传说！无敌夺冠】在限制极强的盲盒规则下，你不仅完美避开了属性惩罚，更深度激活了 [{0}] 体系的阵型默契加成！全服唯有不到 1% 的顶尖战术大师能够达成此奇迹！",
         eval2: "【豪门精妙组队】顶住了盲盒与多重位置衰减的制约，组建出群星闪耀的豪华阵容，斩获本届世界杯亚军！",
         eval3: "杀入世界杯8强！由于盲盒限制被迫吃下一些低分卡或踢次要位置，但整体搭配合理，战术调整后依旧是一支铁血之师。",
@@ -352,15 +361,16 @@ const i18n = {
         occupiedAlert: "This slot is occupied. Swapping is only allowed between pitch players.",
         swapAlert: "Swap Failed! {0} cannot play in your vacated [{1}] position!", refundAlert: "❌ Denied: Maximum refund limit reached for this match!",
         modalHeader: "🏆 Managerial Career Final Settlement 🏆", restartBtn: "Restart Challenge", scoreText: "Dream Team Total Rating: {0} (Formation: {1})", rankText: "World Ranking: No. {0}",
-        secondaryPos: "Secondary", tacticBonus: "Tactic Fit", shareBtn: "🔗 Share Dream Team Link", shareSuccess: "✅ Roster & Share link copied to clipboard! Share it with friends to compare tactics!",
+        secondaryPos: "Secondary", tacticBonus: "Tactic Fit", shareBtn: "🔗 Share Dream Team Link", shareSuccess: "✅ Roster & detailed TXT abstract copied to clipboard!",
         viewModeSubtitle: "👀 Reviewing a mythic tactical dream squad shared by another manager.",
         sharedTitle: "Shared Squad / 专属阵容",
         badgeFit: "FIT", badgeSec: "SEC",
+        shareTemplate: "【🏆 World Cup Dream Team Challenge】\n🔥 Formation: {0}\n💯 Total Rating: {1} Points\n🏅 World Manager Ranking: No. {2}\n\n⚽ Starting Lineup Roster:\n{3}\n\n👇 Open this link in your browser to inspect this full tactical layout:\n{4}",
         eval1: "【Mythic Manager! World Champion】 Against the blinding RNG constraints, you built a flawless squad, eliminated all penalties, and fully maximized the [{0}] tactical bonus! Achieved by less than 1% of tactical geniuses globally!",
         eval2: "【Elite Team Building】 Overcoming the blind box RNG and secondary position nerfs, you assembled an invincible super team and won the Runner-up!",
         eval3: "World Cup Quarter-finals! Forced to accept lower-tier options or secondary position penalties, but still a fierce iron-willed squad.",
         eval4: "Eliminated in the Knockout stage. Positional constraints forced too many sub-optimal choices and compromised your overall strength.",
-        positions: { GK: "GK", DF: "DF", MF: "MF", FW: "FW", "门将": "GK", "左后卫": "LB", "左中卫": "LCB", "右中卫": "RCB", "右后卫": "RB", "左中场": "LCM", "中前卫": "CM", "right Midfielder": "RCM", "右中场": "RCM", "左边锋": "LW", "中锋": "ST", "右边锋": "RW", "左前卫": "LM", "右前卫": "RM", "左前锋": "LS", "右前锋": "RS", "拖后中卫": "CB", "后腰": "CDM", "左边前卫": "LWM", "右边前卫": "RWM", "九号半": "CF", "突前马刀": "SS" },
+        positions: { GK: "GK", DF: "DF", MF: "MF", FW: "FW", "门将": "GK", "左后卫": "LB", "left Midfielder": "LCM", "左中卫": "LCB", "右中卫": "RCB", "右后卫": "RB", "左中场": "LCM", "中前卫": "CM", "right Midfielder": "RCM", "右中场": "RCM", "左边锋": "LW", "中锋": "ST", "右边锋": "RW", "左前卫": "LM", "右前卫": "RM", "左前锋": "LS", "右前锋": "RS", "拖后中卫": "CB", "后腰": "CDM", "左边前卫": "LWM", "右边前卫": "RWM", "九号半": "CF", "突前马刀": "SS" },
         countries: { "阿根廷": "Argentina", "西德": "West Germany", "法国": "France", "巴西": "Brazil", "德国": "Germany", "意大利": "Italy", "西班牙": "Spain", "荷兰": "Netherlands" }
     }
 };
@@ -487,7 +497,7 @@ const formations = {
         { id: "slot3", role: "DF", name: "拖后中卫", t: 79, l: 50 },
         { id: "slot4", role: "DF", name: "右中卫", t: 76, l: 75 },
         { id: "slot5", role: "MF", name: "后腰", t: 58, l: 50 },
-        { id: "slot6", role: "MF", name: "左边前卫", t: 44, l: 15 }, // 已完全映射修复
+        { id: "slot6", role: "MF", name: "左边前卫", t: 44, l: 15 },
         { id: "slot7", role: "MF", name: "左中场", t: 42, l: 36 },
         { id: "slot8", role: "MF", name: "右中场", t: 42, l: 64 },
         { id: "slot9", role: "MF", name: "右边前卫", t: 44, l: 85 },
@@ -552,9 +562,10 @@ function switchLanguage(lang) {
         document.getElementById("teamTitle").innerText = isViewMode ? i18n[lang].sharedTitle : i18n[lang].initTitle;
     }
 
-    // 联动改动：如果处于结算面板打开状态，切换语言时同步翻译大名单
     if (document.getElementById("resultModal").style.display === "flex") {
         renderRosterSection();
+        document.getElementById("totalScoreText").innerText = i18n[currentLang].scoreText.format(finalCalculatedScore, currentFormation);
+        document.getElementById("rankText").innerText = i18n[currentLang].rankText.format(finalCalculatedRank);
     }
     updateUI();
 }
@@ -597,17 +608,40 @@ function checkUrlParams() {
 
 function shareTactics() {
     let pData = [];
-    Object.keys(finalSquad).forEach(slotId => {
-        const p = finalSquad[slotId];
-        pData.push(`${slotId},${encodeURIComponent(p.nameZh)},${encodeURIComponent(p.nameEn)},${p.pos.join('|')},${p.score},${p.fit}`);
+    let textRosterLines = [];
+    
+    const currentConfig = formations[currentFormation];
+    currentConfig.forEach(cfg => {
+        const p = finalSquad[cfg.id];
+        if (p) {
+            pData.push(`${cfg.id},${encodeURIComponent(p.nameZh)},${encodeURIComponent(p.nameEn)},${p.pos.join('|')},${p.score},${p.fit}`);
+            
+            const posName = i18n[currentLang].positions[cfg.name] || cfg.name;
+            const posLabel = currentLang === "zh" ? `${posName} (${cfg.role})` : posName;
+            const nameLabel = currentLang === "zh" ? p.nameZh : p.nameEn;
+            
+            let statusSuffix = "";
+            if (p.fit === currentFormation) statusSuffix += " 🔥";
+            if (p.pos.indexOf(cfg.role) > 0) statusSuffix += " ⚠️";
+            
+            textRosterLines.push(`• [${posLabel}] ${nameLabel}${statusSuffix}`);
+        }
     });
     
     const shareUrl = `${window.location.origin}${window.location.pathname}?f=${currentFormation}&p=${pData.join(';')}`;
     
-    navigator.clipboard.writeText(shareUrl).then(() => {
+    const fullTextPayload = i18n[currentLang].shareTemplate.format(
+        currentFormation,
+        finalCalculatedScore,
+        finalCalculatedRank,
+        textRosterLines.join('\n'),
+        shareUrl
+    );
+    
+    navigator.clipboard.writeText(fullTextPayload).then(() => {
         alert(i18n[currentLang].shareSuccess);
     }).catch(err => {
-        prompt("Copy Link / 复制链接:", shareUrl);
+        prompt("Copy Roster & URL:", fullTextPayload);
     });
 }
 
@@ -915,14 +949,11 @@ function rerollTeam() {
     cancelSelection(); renderPool(); updateUI();
 }
 
-// 核心大名单渲染生成器（支持实时中英多语动态重刷）
 function renderRosterSection() {
     const container = document.getElementById("rosterContainer");
     container.innerHTML = "";
     
-    // 获取当前阵型的有序配置，依次从前场推演到后场门将
     const currentConfig = formations[currentFormation];
-    
     currentConfig.forEach(cfg => {
         const p = finalSquad[cfg.id];
         if (!p) return;
@@ -930,13 +961,10 @@ function renderRosterSection() {
         const item = document.createElement("div");
         item.className = "roster-item";
         
-        // 双语转换卡位头（中文：左后卫，英文：LB）
         const posName = i18n[currentLang].positions[cfg.name] || cfg.name;
         const posLabel = currentLang === "zh" ? `${posName} (${cfg.role})` : posName;
-        
         const nameLabel = currentLang === "zh" ? p.nameZh : p.nameEn;
         
-        // 校验该卡位在该球员身上是否有次要或契合徽章
         let badgesHtml = "";
         if (p.fit === currentFormation) {
             badgesHtml += `<span class="badge fit">${i18n[currentLang].badgeFit}</span>`;
@@ -991,11 +1019,13 @@ function settleGame() {
         evalText = i18n[currentLang].eval4;
     }
 
+    finalCalculatedScore = totalScore;
+    finalCalculatedRank = rank;
+
     document.getElementById("totalScoreText").innerText = i18n[currentLang].scoreText.format(totalScore, currentFormation);
     document.getElementById("rankText").innerText = i18n[currentLang].rankText.format(rank);
     document.getElementById("evaluationText").innerText = evalText;
     
-    // 呼叫花名册大名单生成
     renderRosterSection();
     
     document.getElementById("resultModal").style.display = "flex";
