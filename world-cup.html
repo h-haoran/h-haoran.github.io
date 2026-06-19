@@ -217,6 +217,7 @@ permalink: /world-cup-challenge/
     </div>
 
 <script>
+// 已经全面格式化与扩展的数据库，确保【每个年代】都有【复数以上的完整球队+全员配置】
 const database = {
     "1986": {
         "阿根廷": [
@@ -280,6 +281,12 @@ const database = {
             {name:"普约尔", pos:["DF"], score:93}, {name:"皮克", pos:["DF"], score:91},
             {name:"卡西利亚斯", pos:["GK"], score:95}, {name:"比利亚", pos:["FW"], score:92},
             {name:"阿隆索", pos:["MF"], score:92}, {name:"布斯克茨", pos:["MF"], score:90}
+        ],
+        "荷兰": [
+            {name:"斯内德", pos:["MF"], score:95}, {name:"罗本", pos:["FW"], score:94},
+            {name:"范佩西", pos:["FW"], score:90}, {name:"库伊特", pos:["FW", "MF"], score:88},
+            {name:"范博梅尔", pos:["MF"], score:88}, {name:"德容", pos:["MF"], score:87},
+            {name:"海廷加", pos:["DF"], score:85}, {name:"斯特克伦博格", pos:["GK"], score:86}
         ]
     },
     "2022": {
@@ -391,16 +398,22 @@ function switchFormation(formType) {
     renderPool();
 }
 
+// 核心重构：独立且有序地随机“年代”与“球队”
 function rollTeam() {
     if (rolledTimes > 0 && (pickedCountFromCurrent < 2 || pickedCountFromCurrent > 3)) {
         alert("不符合规则！每一支抽出的球队你必须在里面挑 2 名或 3 名球员，然后才能继续随机下一家！");
         return;
     }
     pickedCountFromCurrent = 0; rolledTimes++;
+    
+    // 1. 先抽取随机年份
     const years = Object.keys(database);
     currentYear = years[Math.floor(Math.random() * years.length)];
+    
+    // 2. 根据定好的年份，独立随机抽取该年份下的国家队
     const countries = Object.keys(database[currentYear]);
     currentCountry = countries[Math.floor(Math.random() * countries.length)];
+    
     renderPool();
     updateUI();
 }
@@ -632,7 +645,6 @@ function updateUI() {
     document.getElementById("squadCount").innerText = totalPicked;
     document.getElementById("currentTeamCount").innerText = pickedCountFromCurrent;
     
-    // 控制改年份和改球队按钮只有在开启游戏后才能点击
     if (rolledTimes > 0) {
         if (rights.year > 0) document.getElementById("btnRerollYear").disabled = false;
         if (rights.team > 0) document.getElementById("btnRerollTeam").disabled = false;
@@ -649,20 +661,14 @@ function updateUI() {
     }
 }
 
-// 核心改动 1：更改年代（必须和旧年代不同）
+// 更改年代（严禁抽回当前年份）
 function rerollYear() {
     if (rights.year <= 0) return; 
     
     const years = Object.keys(database);
-    if (years.length <= 1) {
-        alert("数据库里年代样本不足，无法切换至不同年代！");
-        return;
-    }
-
     let oldYear = currentYear;
     let newYear = currentYear;
     
-    // 强制循环直至摇出不同的年份
     while (newYear === oldYear) {
         newYear = years[Math.floor(Math.random() * years.length)];
     }
@@ -672,27 +678,21 @@ function rerollYear() {
     document.getElementById("btnRerollYear").disabled = true;
     
     currentYear = newYear;
-    // 换了新年代后，国家队也顺便随机抽取该年代的一个
+    // 年代变更后，球队列表也随之变为新年代下的其中一个随机球队
     const countries = Object.keys(database[currentYear]);
     currentCountry = countries[Math.floor(Math.random() * countries.length)];
     
     renderPool();
 }
 
-// 核心改动 2：更改球队（必须和该年代下的旧球队不同）
+// 更改球队（严禁抽回当前球队）
 function rerollTeam() {
     if (rights.team <= 0) return; 
 
     const countries = Object.keys(database[currentYear]);
-    if (countries.length <= 1) {
-        alert(`当前 ${currentYear} 年份下只有一支国家队，无法更改为其他球队！`);
-        return;
-    }
-
     let oldCountry = currentCountry;
     let newCountry = currentCountry;
 
-    // 强制循环直至摇出不同的球队
     while (newCountry === oldCountry) {
         newCountry = countries[Math.floor(Math.random() * countries.length)];
     }
