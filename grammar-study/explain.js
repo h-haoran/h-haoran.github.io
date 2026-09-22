@@ -1,8 +1,9 @@
 const Explain=(()=>{
  const guides=[
   {match:/時|過去|現在|未來|完成|進行|used to|經歷|持續/,name:'時態判斷',steps:['先圈出時間詞或上下文時間點。','判斷動作是習慣、進行過程、完成結果還是已結束事件。','再依主詞選擇助動詞或動詞形式。'],pitfall:'不要只靠單一「提示詞」機械式地選擇時態；先確認動作與時間參照點的關係。'},
-  {match:/疑問|do|does|did|簡短回答|否定|語序/,name:'疑問與否定',steps:['先找原句的完整動詞片語。','已有 be、情態助動詞或完成式 have 時直接移動它；否則一般時態使用 do。','出現 does 或 did 後，把主要動詞恢復原形。'],pitfall:'最常見錯誤是重複標記：Does she works 和 Did he went 都把時態標記了兩次。'},
-  {match:/be|there be|have got/,name:'be 與基礎結構',steps:['確認表達的是身分、狀態、位置、存在還是擁有。','根據主詞和時間選擇 am/is/are/was/were 或 have/has。','否定和提問時保持同一套結構，不混用 do 與 have got。'],pitfall:'be 句不使用 do 提問；普通 have 與 have got 的提問方式不要混合。'},
+  {match:/have got|has got|haven’t got|hasn’t got/,name:'have got 表示擁有',steps:['先確認 have got 在此表示「擁有」。','依主詞選擇 have got 或 has got。','提問時把 have / has 移到主詞前，got 保持不變。'],pitfall:'普通 have 用 do / does 提問；have got 直接移動 have / has，不要混成 Does she have got...?。'},
+  {match:/疑問|do|does|簡短回答|否定|語序/,name:'現在式疑問與否定',steps:['先判斷原句使用 be 還是一般動詞。','be 直接加 not 或移到主詞前；一般動詞使用 do / does。','出現 does 後，主要動詞恢復原形。'],pitfall:'不要重複標記第三人稱：應寫 Does she work，不寫 Does she works。'},
+  {match:/be|there be|am|is|are/,name:'be 與 there be',steps:['先確認是在說明身分、狀態、位置，還是在介紹某處存在的人或物。','依主詞選擇 am、is 或 are。','there be 要依後面的單數、複數或不可數名詞選擇 is / are。'],pitfall:'be 後可接名詞、形容詞或地點；there is / are 表示存在，不要用 have 代替。'},
   {match:/名詞|冠詞|可數|不可數|複數|數量|限定|所有格|零冠詞/,name:'名詞與限定詞',steps:['先判斷名詞是可數還是不可數。','如果是單數可數名詞，檢查前面是否有限定詞。','再根據泛指、特指和數量選擇冠詞或數量詞。'],pitfall:'information、advice、furniture 等常見詞在英文中不可數，不能直接加 a 或複數 -s。'},
   {match:/代名詞|主格|受格|所有格|反身|指示|its|whose/,name:'代名詞與指代',steps:['先判斷這個位置需要主詞、受詞還是所屬關係。','檢視後面是否還有名詞：有名詞用 my/your 等，沒有名詞用 mine/yours 等。','確認代名詞與所指對象在人稱和單複數上一致。'],pitfall:'my 後必須接名詞；mine 後不能再接名詞。its 是「它的」，it’s 是 it is/has。'},
   {match:/形容詞|副詞|比較|最高|ing-ed|連綴動詞|詞類/,name:'修飾與詞類',steps:['先找被修飾的詞。','修飾名詞或放在連綴動詞後通常用形容詞；修飾動作通常用副詞。','比較時確認是兩者比較還是範圍內最高。'],pitfall:'-ed 常描述感受者，-ing 常描述引發感受的事物；但判斷仍要結合句意。'},

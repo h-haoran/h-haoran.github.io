@@ -7,8 +7,8 @@ const MEMORY_BANK={
     {title:'容易誤加介系詞的及物動詞',columns:['正確表達','不要說','意思'],rows:[['discuss the problem','discuss about the problem','討論問題'],['enter the room','enter into the room','進入房間'],['reach the station','reach to the station','到達車站'],['answer the question','answer to the question','回答問題'],['marry someone','marry with someone','與某人結婚']]}
   ],
   'be-there-have':[
-    {title:'be 與 have 的基本變形',columns:['動詞','現在式','過去式','過去分詞'],rows:[['be','am / is / are','was / were','been'],['have','have / has','had','had']],note:'be 後接身分、狀態、地點；have 表示擁有或構成完成式。'},
-    {title:'there be 必記形式',columns:['時間／情態','結構','例句'],rows:[['現在單數','There is','There is a café nearby.'],['現在複數','There are','There are two cafés nearby.'],['過去單數','There was','There was a problem.'],['過去複數','There were','There were many people.'],['未來','There will be','There will be a meeting.'],['情態','There may be','There may be a mistake.']]}
+    {title:'be 動詞現在式',columns:['主詞','be 動詞','例句'],rows:[['I','am','I am ready.'],['he / she / it / 單數名詞','is','She is a student.'],['you / we / they / 複數名詞','are','They are at home.']],note:'本課只學現在式 am、is、are；過去式會在過去簡單式單元介紹。'},
+    {title:'there be 現在式',columns:['後接名詞','結構','例句'],rows:[['單數','There is','There is a café nearby.'],['不可數','There is','There is some water.'],['複數','There are','There are two cafés nearby.']],note:'先看 be 後面的名詞，不要用 have 代替 there is / are。'}
   ],
   nouns:[
     {title:'高頻不規則複數',columns:['單數','複數','中文'],rows:[['child','children','孩子'],['person','people','人'],['man / woman','men / women','男人／女人'],['tooth / foot','teeth / feet','牙齒／腳'],['mouse','mice','老鼠'],['sheep','sheep','綿羊'],['fish','fish / fishes','魚／魚的種類']]},
@@ -21,15 +21,15 @@ const MEMORY_BANK={
   present:[
     {title:'第三人稱單數變化',columns:['規則','例子','結果'],rows:[['一般加 -s','work, read','works, reads'],['s/x/ch/sh/o 後加 -es','watch, go','watches, goes'],['子音字母+y：變 y 為 i 加 -es','study, try','studies, tries'],['母音字母+y：直接加 -s','play, enjoy','plays, enjoys'],['不規則','have, be','has, is']]},
     {title:'頻率副詞位置',columns:['副詞','大致頻率','常見位置'],rows:[['always','總是','be 後／一般動詞前'],['usually','通常','一般動詞前'],['often','經常','一般動詞前'],['sometimes','有時','句首、動詞前或句末'],['hardly ever','幾乎不','一般動詞前'],['never','從不','一般動詞前；不再加 not']]},
-    {title:'通常不用進行式的狀態動詞',columns:['類別','常見動詞','例句'],rows:[['思想認知','know, understand, believe, remember','I know the answer.'],['喜好意願','like, love, hate, want, need, prefer','She wants some water.'],['擁有關係','have, own, belong','This bag belongs to me.'],['感官狀態','see, hear, seem','I see what you mean.']]}
+    {title:'現在簡單式高頻一般動詞',columns:['原形','第三人稱單數','例句'],rows:[['have','has','She has a bike.'],['like','likes','He likes music.'],['want','wants','Mia wants some water.'],['need','needs','The plant needs water.'],['know','knows','She knows the answer.'],['live','lives','Tom lives in Sydney.']],note:'先熟悉肯定句的動詞變化；否定與疑問形式會在下一課學習。'}
   ],
   questions:[
-    {title:'be、do 與情態助動詞提問表',columns:['原句動詞片語','疑問句開頭','例句'],rows:[['am / is / are','Am / Is / Are + 主詞','Is she ready?'],['was / were','Was / Were + 主詞','Were they late?'],['現在簡單式的一般動詞','Do / Does + 主詞 + 原形動詞','Does he work here?'],['過去簡單式的一般動詞','Did + 主詞 + 原形動詞','Did she go home?'],['情態助動詞','情態助動詞 + 主詞 + 原形動詞','Can you swim?'],['have/has + 過去分詞','Have / Has + 主詞 + 過去分詞','Has he finished?']]},
-    {title:'高頻否定縮寫',columns:['完整形式','縮寫','提醒'],rows:[['is not','isn’t','be 後直接加 not'],['are not','aren’t','—'],['do not','don’t','後接原形動詞'],['does not','doesn’t','後接原形動詞'],['did not','didn’t','後接原形動詞'],['cannot','can’t','不是 can not 的常規拼法'],['will not','won’t','不規則縮寫']]}
+    {title:'be 與 do / does 提問表',columns:['原句動詞','疑問句開頭','例句'],rows:[['am / is / are','Am / Is / Are + 主詞','Is she ready?'],['I / you / we / they + 一般動詞','Do + 主詞 + 原形動詞','Do they work here?'],['he / she / it + 一般動詞','Does + 主詞 + 原形動詞','Does he work here?'],['have / has 表示擁有','Do / Does + 主詞 + have','Does she have a car?']]},
+    {title:'本課必記否定縮寫',columns:['完整形式','縮寫','後面接什麼'],rows:[['is not','isn’t','名詞、形容詞或地點'],['are not','aren’t','名詞、形容詞或地點'],['do not','don’t','原形動詞'],['does not','doesn’t','原形動詞']],note:'doesn’t 後寫 have、like、work，不寫 has、likes、works。'}
   ],
   wh:[
-    {title:'常用 WH 疑問詞',columns:['疑問詞','詢問內容','例句'],rows:[['who','誰','Who called you?'],['what','什麼','What do you need?'],['which','哪一個（範圍有限）','Which one do you prefer?'],['where','哪裡','Where does she live?'],['when','何時','When did it start?'],['why','為什麼','Why are you late?'],['whose','誰的','Whose bag is this?'],['how','怎樣／如何','How did you get here?']]},
-    {title:'how 的常見組合',columns:['結構','詢問','例句'],rows:[['how many','可數數量','How many books?'],['how much','不可數數量／價格','How much water?'],['how often','頻率','How often do you exercise?'],['how long','時長／長度','How long have you lived here?'],['how far','距離','How far is the station?'],['how old','年齡','How old is she?']]}
+    {title:'常用 WH 疑問詞',columns:['疑問詞','詢問內容','例句'],rows:[['who','誰','Who lives here?'],['what','什麼','What do you need?'],['which','哪一個（範圍有限）','Which one do you prefer?'],['where','哪裡','Where does she live?'],['when','何時','When does class start?'],['why','為什麼','Why are you late?'],['whose','誰的','Whose bag is this?'],['how','怎樣／如何','How do you get to work?']]},
+    {title:'how 的常見組合',columns:['結構','詢問','例句'],rows:[['how many','可數數量','How many books?'],['how much','不可數數量／價格','How much water?'],['how often','頻率','How often do you exercise?'],['how long','時長／長度','How long is the movie?'],['how far','距離','How far is the station?'],['how old','年齡','How old is she?']]}
   ],
   'present-cont':[
     {title:'動詞變 -ing 的拼寫',columns:['規則','原形','-ing 形式'],rows:[['一般直接加 -ing','work, read','working, reading'],['不發音 e：去 e','make, write','making, writing'],['重讀閉音節：雙寫末字母','run, sit','running, sitting'],['ie 變 y','lie, die','lying, dying'],['以 y 結尾不變化','study, play','studying, playing']]},
@@ -58,11 +58,12 @@ const MEMORY_BANK={
   ],
   modals:[
     {title:'常用情態助動詞',columns:['情態助動詞','核心意義','例句'],rows:[['can / could','能力、許可、請求','Could you help me?'],['may / might','許可、可能','It might rain.'],['must','必須；有把握的推測','You must stop.'],['have to','客觀必要','I have to work.'],['should','建議、應該','You should rest.'],['mustn’t','禁止','You mustn’t smoke here.'],['don’t have to','不必','You don’t have to come.'],['can’t','不能；不可能','He can’t be at home.']]},
-    {title:'情態助動詞形式規則',columns:['規則','正確','錯誤'],rows:[['後接原形動詞','She can swim.','She can swims.'],['沒有第三人稱 -s','He must leave.','He musts leave.'],['疑問直接提前','Can you help?','Do you can help?'],['否定直接加 not','You should not go.','You don’t should go.']]}
+    {title:'高頻形容詞＋介系詞搭配',columns:['搭配','意思','例句'],rows:[['afraid of','害怕','She is afraid of dogs.'],['good at','擅長','He is good at math.'],['interested in','對……有興趣','I am interested in art.'],['famous for','因……聞名','The city is famous for its food.'],['different from','與……不同','This is different from that.'],['ready for','準備好……','We are ready for the test.']]}
   ],
   perfect:[
     {title:'完成式常見過去分詞',columns:['原形','過去式','過去分詞'],rows:[['be','was / were','been'],['go','went','gone'],['do','did','done'],['see','saw','seen'],['take','took','taken'],['write','wrote','written'],['speak','spoke','spoken'],['break','broke','broken'],['choose','chose','chosen'],['forget','forgot','forgotten'],['know','knew','known'],['begin','began','begun']]},
-    {title:'現在完成式標誌詞',columns:['詞語','常見位置／搭配','例句'],rows:[['already','肯定句中或句末','She has already left.'],['yet','疑問或否定句末','Have you finished yet?'],['just','have/has 後','I have just arrived.'],['ever / never','過去分詞前','Have you ever been there?'],['since','接起點','since 2020'],['for','接一段時間','for three years'],['so far','到目前為止','So far, we have learned ten verbs.']]}
+    {title:'現在完成式標誌詞',columns:['詞語','常見位置／搭配','例句'],rows:[['already','肯定句中或句末','She has already left.'],['yet','疑問或否定句末','Have you finished yet?'],['just','have/has 後','I have just arrived.'],['ever / never','過去分詞前','Have you ever been there?'],['since','接起點','since 2020'],['for','接一段時間','for three years'],['so far','到目前為止','So far, we have learned ten verbs.']]},
+    {title:'have 與 have got 表示擁有',columns:['形式','肯定句','疑問句'],rows:[['普通 have','She has a car.','Does she have a car?'],['have got','She has got a car.','Has she got a car?'],['否定','She doesn’t have a car.','She hasn’t got a car.']],note:'兩套形式不要混用：不說 Does she have got...?'}
   ],
   nonfinite:[
     {title:'常接 to do 的動詞',columns:['動詞','搭配','例句'],rows:[['want','want to do','I want to leave.'],['need','need to do','We need to talk.'],['decide','decide to do','She decided to stay.'],['hope','hope to do','I hope to see you.'],['plan','plan to do','They plan to travel.'],['promise','promise to do','He promised to help.'],['agree','agree to do','We agreed to wait.'],['learn','learn to do','She learned to drive.']]},
