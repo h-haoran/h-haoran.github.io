@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="循序渐进的英语语法学习、练习、考试与错题诊断工具">
-  <title>Grammar Path · 英语语法学习</title>
+  <meta name="description" content="循序漸進的英文文法學習、練習、測驗與錯題診斷工具">
+  <title>Grammar Path · 英文文法學習</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2311172a'/%3E%3Cpath d='M18 17h28v8H26v8h17v8H26v14h-8z' fill='%23f5c84c'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -12,23 +12,23 @@
   <div class="app-shell">
     <aside class="sidebar" id="sidebar">
       <div class="brand"><span class="brand-mark">G.</span><span>Grammar Path</span></div>
-      <nav class="main-nav" aria-label="主导航">
-        <button class="nav-item active" data-view="dashboard"><span>⌂</span>学习地图</button>
-        <button class="nav-item" data-view="vocabulary"><span>◇</span>单词本 <b id="vocab-count">0</b></button>
-        <button class="nav-item" data-view="mistakes"><span>↺</span>错题本 <b id="mistake-count">0</b></button>
+      <nav class="main-nav" aria-label="主導航">
+        <button class="nav-item active" data-view="dashboard"><span>⌂</span>學習地圖</button>
+        <button class="nav-item" data-view="vocabulary"><span>◇</span>單字本 <b id="vocab-count">0</b></button>
+        <button class="nav-item" data-view="mistakes"><span>↺</span>錯題簿 <b id="mistake-count">0</b></button>
       </nav>
       <div class="sidebar-note">
-        <span>今日目标</span>
-        <strong id="daily-progress">0 / 20 题</strong>
+        <span>今日目標</span>
+        <strong id="daily-progress">0 / 20 題</strong>
         <div class="mini-progress"><i id="daily-progress-bar"></i></div>
       </div>
     </aside>
 
     <main class="main">
       <header class="topbar">
-        <button class="menu-btn" id="menu-btn" aria-label="打开菜单">☰</button>
-        <div><span class="eyebrow" id="page-eyebrow">YOUR LEARNING PATH</span><h1 id="page-title">英语语法学习地图</h1></div>
-        <div class="streak"><span>🔥</span><div><b id="streak-days">1</b><small>连续学习</small></div></div>
+        <button class="menu-btn" id="menu-btn" aria-label="開啟選單">☰</button>
+        <div><span class="eyebrow" id="page-eyebrow">你的學習路徑</span><h1 id="page-title">英文文法學習地圖</h1></div>
+        <div class="streak"><span>🔥</span><div><b id="streak-days">1</b><small>連續學習</small></div></div>
       </header>
       <section id="app-content" class="content" aria-live="polite"></section>
     </main>
@@ -36,6 +36,7 @@
   <div id="toast" class="toast" role="status"></div>
   <script src="data.js"></script>
   <script src="curriculum-v2.js"></script>
+  <script src="memory-v2.js"></script>
   <script src="explain.js"></script>
   <script src="app.js"></script>
 </body>
